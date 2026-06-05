@@ -265,6 +265,16 @@ nav:not(.scrolled) .nav-user-logged-name{color:#fff;}
   box-shadow:0 4px 20px rgba(0,0,0,.25);
 }
 .btn-primary-hero:hover{background:var(--pop-coral);color:#fff;transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,74,.4);}
+.btn-wa-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#25D366;color:#fff;text-decoration:none;
+  padding:14px 28px;border-radius:50px;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:.01em;cursor:pointer;
+  transition:all .25s;
+  box-shadow:0 4px 20px rgba(37,211,102,.3);
+}
+.btn-wa-hero:hover{background:#1fba58;transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.4);}
 .btn-secondary-hero{
   background:rgba(255,255,255,.15);color:#fff;
   border:1.5px solid rgba(255,255,255,.55);
@@ -1467,9 +1477,13 @@ nav:not(.scrolled) ~ * .about-fab{color:#fff;}
     <p class="hero-sub">Beautiful digital invitations for weddings, graduations,<br>corporate events — and every moment worth celebrating.</p>
     <div class="hero-actions">
       <button class="btn-primary-hero" onclick="goto('pricing')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Create Invite
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Available Packages
       </button>
+      <a href="https://wa.me/260977751804?text=Hi%20Awatu!%20I%27d%20like%20to%20find%20out%20more%20about%20your%20digital%20invitations." target="_blank" class="btn-wa-hero">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.847 0-3.574-.497-5.064-1.364l-.361-.214-3.762.896.944-3.659-.235-.374A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Chat on WhatsApp
+      </a>
       <button class="btn-secondary-hero" onclick="goto('gallery')">Explore Designs</button>
     </div>
     <div class="hero-search">
@@ -4852,7 +4866,7 @@ function showPaymentStep(step){
     const refInput=document.getElementById('payRefInput');
     if(refInput){refInput.value='';refInput.focus();}
     const btn=document.getElementById('paySubmitBtn');
-    if(btn){btn.disabled=true;btn.textContent='Submit Payment Reference';}
+    if(btn){btn.disabled=true;btn.textContent='Submit Withdrawal Reference';}
   }
 }
 
@@ -5001,7 +5015,7 @@ async function submitPaymentRef(){
     setTimeout(()=>{if(currentUser)openDash();else openAuth(false,'login');},600);
   }
 
-  if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
+  if(btn){btn.textContent='Submit Withdrawal Reference';btn.disabled=false;}
 }
 
 async function sendPaymentEmailToAdmin(data){
@@ -7397,7 +7411,7 @@ nav{transition:background .3s,box-shadow .3s,backdrop-filter .3s;}
       </div>
       <!-- Payment instructions -->
       <div style="margin-bottom:20px;">
-        <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#78716c;margin-bottom:10px;">Send Payment To</div>
+        <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#78716c;margin-bottom:10px;">Withdraw To</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="background:#f4f2ef;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
             <div>
@@ -7417,15 +7431,15 @@ nav{transition:background .3s,box-shadow .3s,backdrop-filter .3s;}
       </div>
       <!-- Steps -->
       <div style="margin-bottom:20px;">
-        <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#78716c;margin-bottom:10px;">How to pay</div>
+        <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#78716c;margin-bottom:10px;">How to withdraw</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <div style="width:22px;height:22px;border-radius:50%;background:#1c1917;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">1</div>
-            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#44403c;line-height:1.5;">Send the exact amount to one of the numbers above via <strong>Airtel Money</strong> or <strong>MTN Mobile Money</strong></div>
+            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#44403c;line-height:1.5;">Withdraw the exact amount to one of the numbers below via <strong>Airtel Money</strong> or <strong>MTN Mobile Money</strong></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <div style="width:22px;height:22px;border-radius:50%;background:#1c1917;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">2</div>
-            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#44403c;line-height:1.5;">After paying, your network will send you a <strong>confirmation SMS</strong> — it contains a transaction ID like <span style="font-family:monospace;background:#f4f2ef;padding:1px 5px;border-radius:4px;">TXN12345678</span></div>
+            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#44403c;line-height:1.5;">After withdrawing, your network will send you a <strong>confirmation SMS</strong> — it contains a transaction ID like <span style="font-family:monospace;background:#f4f2ef;padding:1px 5px;border-radius:4px;">TXN12345678</span></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <div style="width:22px;height:22px;border-radius:50%;background:#1c1917;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">3</div>
@@ -7437,9 +7451,9 @@ nav{transition:background .3s,box-shadow .3s,backdrop-filter .3s;}
       <div style="margin-bottom:16px;">
         <label style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#78716c;display:block;margin-bottom:6px;">Transaction ID from your SMS *</label>
         <input id="payRefInput" type="text" placeholder="e.g. TXN12345678 or AB123456789" style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid #e5e1dc;background:#faf9f7;font-family:'Inter',sans-serif;font-size:14px;color:#1c1917;box-sizing:border-box;outline:none;" oninput="document.getElementById('paySubmitBtn').disabled=!this.value.trim()">
-        <div style="font-family:'Inter',sans-serif;font-size:11px;color:#78716c;margin-top:6px;">Found in the confirmation SMS sent by Airtel or MTN after your payment</div>
+        <div style="font-family:'Inter',sans-serif;font-size:11px;color:#78716c;margin-top:6px;">Found in the confirmation SMS sent by Airtel or MTN after your withdrawal</div>
       </div>
-      <button id="paySubmitBtn" onclick="submitPaymentRef()" disabled style="width:100%;padding:14px;border-radius:50px;background:#1c1917;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;margin-bottom:10px;">Submit Payment Reference</button>
+      <button id="paySubmitBtn" onclick="submitPaymentRef()" disabled style="width:100%;padding:14px;border-radius:50px;background:#1c1917;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;margin-bottom:10px;">Submit Withdrawal Reference</button>
       <button onclick="closePaymentModal()" style="width:100%;padding:11px;border-radius:50px;background:transparent;border:1.5px solid #e5e1dc;color:#78716c;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;">Cancel</button>
     </div>
   </div>
