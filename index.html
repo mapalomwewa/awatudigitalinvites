@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Awatu · Beautiful Digital Invitations</title>
 <meta name="description" content="Create and share stunning digital invitations for weddings, birthdays, graduations and more. Beautiful designs, instant RSVP tracking.">
 <!-- Open Graph -->
@@ -773,6 +773,65 @@ footer{background:var(--ink2);padding:64px 32px 32px;}
   .pkg-cards{grid-template-columns:1fr!important;}
   .gal-grid{grid-template-columns:1fr!important;gap:14px!important;}
   .hero-title{font-size:28px!important;}
+}
+
+/* ── Remove custom cursor on mobile/touch ── */
+@media(hover:none),(pointer:coarse){
+  /* Restore default cursor on all elements */
+  *{cursor:auto!important;}
+  a,button,[role="button"],
+  .gal-card,.pkg-card,.pill,.plan-btn,
+  .dash-event-card,.design-card,.dnav-btn,
+  .gv-rsvp-btn,.share-action-btn,.gv-cal-btn,
+  .gv-submit-btn,.nav-auth-btn,.create-event-fab,
+  .dash-ev-action-btn,.dash-logout,.dash-back-btn-small{
+    cursor:pointer!important;
+  }
+  input,textarea,select{cursor:text!important;}
+  /* Hide custom cursor elements */
+  #cur,#cur-ring{display:none!important;}
+}
+
+/* ── Packages — mobile 2-col readable layout ── */
+@media(max-width:768px){
+  /* Main pricing section — stack 2x2 */
+  .plans{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:12px!important;
+    margin-top:28px!important;
+  }
+  .plan{border-radius:14px!important;}
+  .plan-feat{transform:none!important;}
+  .plan-feat:hover{transform:none!important;}
+  .plan-head{padding:18px 16px 0!important;}
+  .plan-body{padding:14px 16px 16px!important;}
+  .plan-name{font-size:18px!important;margin-bottom:10px!important;}
+  .plan-amt{font-size:34px!important;}
+  .plan-cur{font-size:13px!important;}
+  .plan-note{font-size:11px!important;margin-bottom:14px!important;}
+  .plan-feats li{
+    font-size:12px!important;
+    padding:6px 0!important;
+    gap:8px!important;
+  }
+  .plan-btn{
+    padding:11px 12px!important;
+    font-size:12px!important;
+    margin-top:14px!important;
+    border-radius:8px!important;
+  }
+  .badge{font-size:8px!important;padding:3px 8px!important;}
+  .plan-tier{font-size:9px!important;}
+  /* Payment modal packages — 1 col on small screens */
+  .pay-pkg-option{padding:12px 14px!important;}
+}
+
+@media(max-width:480px){
+  /* Stack pricing to single column on very small screens */
+  .plans{grid-template-columns:1fr!important;}
+  .plan-name{font-size:20px!important;}
+  .plan-amt{font-size:40px!important;}
+  .plan-feats li{font-size:13px!important;}
 }
 
 /* -- AUTH MODAL -- */
@@ -3941,6 +4000,8 @@ function showToast(msg,type='',ms=3000){
 
 // -- CURSOR ------------------------------------------------------------
 function initCursor(){
+  // Don't run custom cursor on touch/mobile devices
+  if(window.matchMedia('(hover:none),(pointer:coarse)').matches) return;
   const cur=$('cur'),ring=$('cur-ring');
   if(!cur||!ring)return;
   let mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
