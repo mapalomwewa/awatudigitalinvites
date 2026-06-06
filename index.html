@@ -2944,33 +2944,50 @@ const overlay=document.getElementById('paymentOverlay');
 if(overlay){overlay.style.display='none';document.body.style.overflow='';}
 }
 async function submitPaymentRef(){
+console.log('[Awatu] submitPaymentRef called');
 const ref=document.getElementById('payRefInput')?.value.trim();
+console.log('[Awatu] ref value:', ref);
 if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.textContent='Saving…';btn.disabled=true;}
 try{
+// ── Validate user ────────────────────────────────────────────────────────────
+if(!currentUser){
+showToast('You must be signed in to submit payment','error',5000);
+if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
+return;
+}
+console.log('[Awatu] currentUser:', currentUser.id, currentUser.email);
 const pkg=customFields._pkg||bkState.pkg||'Standard';
 const rules=getPkgRules(pkg);
 const inviteId=genInviteId();
 const f=customFields;
 const dateStr=f.date?new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
 const eventType=f.eyebrow?(f.eyebrow.replace(' Invitation','').trim()||'Event'):(bkState.event||'Event');
+console.log('[Awatu] pkg:', pkg, 'inviteId:', inviteId, 'names:', f.names, 'type:', eventType);
 
-// ── Save invite record ──────────────────────────────────────────────────────
+// ── Save invite ──────────────────────────────────────────────────────────────
+console.log('[Awatu] Saving invite to Supabase…');
 const inviteRecord={
-id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
-names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
-venue:f.venue||'',tagline:f.tagline||'',location:f.location||'',
-map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
-bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
-accent_color:f.accentColor||null,deadline:f.deadline||null,
-start_time:f.startTime||null,end_time:f.endTime||null,
-invite_body:buildInviteHTML(),status:'pending_payment'
+id:inviteId, user_id:currentUser.id, design_key:activeDesignKey||'',
+names:f.names||'', eyebrow:f.eyebrow||'', date_str:dateStr,
+venue:f.venue||'', tagline:f.tagline||'', location:f.location||'',
+map_url:f.mapUrl||'', bg_photo:f.bgPhoto||null,
+bg_opacity:f.bgOpacity||0.65, font_color:f.fontColor||null,
+accent_color:f.accentColor||null, deadline:f.deadline||null,
+start_time:f.startTime||null, end_time:f.endTime||null,
+invite_body:buildInviteHTML(), status:'pending_payment'
 };
 const {error:invErr}=await _sb.from('invites').insert(inviteRecord);
-if(invErr) console.warn('Invite save warning:',invErr.message);
+if(invErr){
+console.error('[Awatu] INVITE SAVE ERROR:', invErr.message, invErr.details, invErr.hint);
+showToast('Invite DB error: '+invErr.message,'error',8000);
+} else {
+console.log('[Awatu] Invite saved OK');
+}
 
-// ── Save event record ───────────────────────────────────────────────────────
+// ── Save event ───────────────────────────────────────────────────────────────
+console.log('[Awatu] Saving event to Supabase…');
 const {error:evErr}=await _sb.from('events').insert({
 user_id:currentUser.id,
 name:f.names||bkState.names||'',
@@ -2979,49 +2996,57 @@ design:activeDesignKey||'',
 date:dateStr,
 venue:f.venue||bkState.venue||'',
 pkg:pkg,
-sent:0,accepted:0,declined:0,
+sent:0, accepted:0, declined:0,
 payment_status:'pending',
 invite_id:inviteId
 });
 if(evErr){
-console.error('Event save error:',evErr.message,evErr.details);
-showToast('Warning: could not save event — check Supabase RLS policies','error',5000);
+console.error('[Awatu] EVENT SAVE ERROR:', evErr.message, evErr.details, evErr.hint, evErr.code);
+showToast('Event DB error: '+evErr.message+' ('+evErr.code+')','error',8000);
+} else {
+console.log('[Awatu] Event saved OK');
 }
 
-// ── Save payment record ─────────────────────────────────────────────────────
+// ── Save payment ─────────────────────────────────────────────────────────────
+console.log('[Awatu] Saving payment to Supabase…');
 const {error:payErr}=await _sb.from('payments').insert({
-user_id:currentUser.id,pkg,
-amount:rules.price,ref_code:ref,status:'pending',
-invite_name:f.names||'',design_key:activeDesignKey||'',
-invite_id:inviteId,client_email:currentUser.email||''
+user_id:currentUser.id, pkg, amount:rules.price,
+ref_code:ref, status:'pending',
+invite_name:f.names||'', design_key:activeDesignKey||'',
+invite_id:inviteId, client_email:currentUser.email||''
 });
-if(payErr) console.warn('Payment save warning:',payErr.message);
+if(payErr){
+console.error('[Awatu] PAYMENT SAVE ERROR:', payErr.message, payErr.details, payErr.hint, payErr.code);
+showToast('Payment DB error: '+payErr.message,'error',8000);
+} else {
+console.log('[Awatu] Payment saved OK');
+}
 
-// ── Cache locally ───────────────────────────────────────────────────────────
+// ── Cache locally ────────────────────────────────────────────────────────────
 try{
 const encoded=btoa(unescape(encodeURIComponent(JSON.stringify({
-id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
-names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
-venue:f.venue||'',pkg:pkg,invite_body:buildInviteHTML()
+id:inviteId, user_id:currentUser.id, design_key:activeDesignKey||'',
+names:f.names||'', eyebrow:f.eyebrow||'', date_str:dateStr,
+venue:f.venue||'', pkg:pkg, invite_body:buildInviteHTML()
 }))));
-localStorage.setItem('awatu_pending_invite_'+inviteId,encoded);
-}catch(e){}
+localStorage.setItem('awatu_pending_invite_'+inviteId, encoded);
+}catch(e){console.warn('[Awatu] localStorage cache failed:',e);}
 const tempId='pending_'+currentUser.id+'_'+(activeDesignKey||'');
 _paymentState[tempId]={status:'pending',refCode:ref,pkg,price:rules.price,inviteId,ts:Date.now()};
 savePaymentState();
 
-// ── Send admin notification email ───────────────────────────────────────────
+// ── Send admin email ─────────────────────────────────────────────────────────
+console.log('[Awatu] Sending admin email…');
 await sendPaymentEmailToAdmin({
 clientName:currentUser.name||'',
 clientEmail:currentUser.email||'',
 inviteNames:f.names||'',
-pkg,price:rules.price,
-refCode:ref,date:dateStr,
-venue:f.venue||'',design:activeDesignKey||'',
-inviteId
+pkg, price:rules.price, refCode:ref,
+date:dateStr, venue:f.venue||'',
+design:activeDesignKey||'', inviteId
 });
 
-// ── Send client confirmation email ─────────────────────────────────────────
+// ── Send client confirmation email ───────────────────────────────────────────
 if(currentUser?.email && window.emailjs){
 try{
 await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
@@ -3032,17 +3057,19 @@ invite_names:f.names||'',
 package:pkg, price:rules.price, ref_code:ref,
 approve_url:'', decline_url:''
 });
-}catch(e){console.warn('Client confirm email:',e.text||e.message);}
+console.log('[Awatu] Client confirmation email sent');
+}catch(e){console.warn('[Awatu] Client email failed:',e.text||e.message);}
 }
 
 closePaymentModal();
 try{closeModal();}catch(e){}
 showToast('Payment submitted! Opening your dashboard…','success',4000);
+console.log('[Awatu] All done — opening dashboard…');
 setTimeout(()=>openDash(),800);
 
 }catch(e){
-console.error('submitPaymentRef error:',e);
-showToast('Submission error — please try again','error',5000);
+console.error('[Awatu] submitPaymentRef CRASH:', e);
+showToast('Submission error: '+e.message,'error',6000);
 }finally{
 if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
 }
@@ -3075,6 +3102,7 @@ if(attempt<4){await new Promise(r=>setTimeout(r,attempt*800));return sendEmail(a
 console.warn('EmailJS not available after retries');return;
 }
 try{
+console.log('[Awatu] Calling emailjs.send to:',AWATU_ADMIN_EMAIL,'service:',EMAILJS_SERVICE_ID);
 const result=await window.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
 to_email:AWATU_ADMIN_EMAIL,
 email:AWATU_ADMIN_EMAIL,
