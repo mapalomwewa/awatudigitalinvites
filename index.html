@@ -2948,21 +2948,15 @@ const ref=document.getElementById('payRefInput')?.value.trim();
 if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.textContent='Saving…';btn.disabled=true;}
+try{
 const pkg=customFields._pkg||bkState.pkg||'Standard';
 const rules=getPkgRules(pkg);
 const inviteId=genInviteId();
 const f=customFields;
 const dateStr=f.date?new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
-const encoded=btoa(unescape(encodeURIComponent(JSON.stringify({
-id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
-names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
-venue:f.venue||'',tagline:f.tagline||'',location:f.location||'',
-map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
-bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
-accent_color:f.accentColor||null,deadline:f.deadline||null,
-start_time:f.startTime||null,end_time:f.endTime||null,
-pkg:pkg,invite_body:buildInviteHTML()
-}))));
+const eventType=f.eyebrow?(f.eyebrow.replace(' Invitation','').trim()||'Event'):(bkState.event||'Event');
+
+// ── Save invite record ──────────────────────────────────────────────────────
 const inviteRecord={
 id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
 names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
@@ -2973,26 +2967,50 @@ accent_color:f.accentColor||null,deadline:f.deadline||null,
 start_time:f.startTime||null,end_time:f.endTime||null,
 invite_body:buildInviteHTML(),status:'pending_payment'
 };
-try {
-await _sb.from('invites').insert(inviteRecord).catch(e=>console.warn('Invite save:',e));
-await _sb.from('events').insert({
-user_id:currentUser.id,name:f.names||'',
-type:(f.eyebrow||'').replace(' Invitation',''),
-design:activeDesignKey||'',date:dateStr,
-venue:f.venue||'',pkg:pkg,
+const {error:invErr}=await _sb.from('invites').insert(inviteRecord);
+if(invErr) console.warn('Invite save warning:',invErr.message);
+
+// ── Save event record ───────────────────────────────────────────────────────
+const {error:evErr}=await _sb.from('events').insert({
+user_id:currentUser.id,
+name:f.names||bkState.names||'',
+type:eventType,
+design:activeDesignKey||'',
+date:dateStr,
+venue:f.venue||bkState.venue||'',
+pkg:pkg,
 sent:0,accepted:0,declined:0,
-payment_status:'pending',invite_id:inviteId
-}).catch(e=>console.warn('Event save:',e));
-await _sb.from('payments').insert({
-user_id:currentUser.id,pkg,amount:rules.price,
-ref_code:ref,status:'pending',
+payment_status:'pending',
+invite_id:inviteId
+});
+if(evErr){
+console.error('Event save error:',evErr.message,evErr.details);
+showToast('Warning: could not save event — check Supabase RLS policies','error',5000);
+}
+
+// ── Save payment record ─────────────────────────────────────────────────────
+const {error:payErr}=await _sb.from('payments').insert({
+user_id:currentUser.id,pkg,
+amount:rules.price,ref_code:ref,status:'pending',
 invite_name:f.names||'',design_key:activeDesignKey||'',
 invite_id:inviteId,client_email:currentUser.email||''
-}).catch(e=>console.warn('Payment save:',e));
-try{localStorage.setItem('awatu_pending_invite_'+inviteId,encoded);}catch(e){}
+});
+if(payErr) console.warn('Payment save warning:',payErr.message);
+
+// ── Cache locally ───────────────────────────────────────────────────────────
+try{
+const encoded=btoa(unescape(encodeURIComponent(JSON.stringify({
+id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
+names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
+venue:f.venue||'',pkg:pkg,invite_body:buildInviteHTML()
+}))));
+localStorage.setItem('awatu_pending_invite_'+inviteId,encoded);
+}catch(e){}
 const tempId='pending_'+currentUser.id+'_'+(activeDesignKey||'');
 _paymentState[tempId]={status:'pending',refCode:ref,pkg,price:rules.price,inviteId,ts:Date.now()};
 savePaymentState();
+
+// ── Send admin notification email ───────────────────────────────────────────
 await sendPaymentEmailToAdmin({
 clientName:currentUser.name||'',
 clientEmail:currentUser.email||'',
@@ -3000,44 +3018,39 @@ inviteNames:f.names||'',
 pkg,price:rules.price,
 refCode:ref,date:dateStr,
 venue:f.venue||'',design:activeDesignKey||'',
-inviteId,encoded
+inviteId
 });
-closePaymentModal();
-try{closeModal();}catch(e){}
-if(currentUser?.email&&window.emailjs&&window.location.protocol!=='file:'){
+
+// ── Send client confirmation email ─────────────────────────────────────────
+if(currentUser?.email && window.emailjs){
 try{
-await window.emailjs.send(EMAILJS_SERVICE_ID,'leh87sa',{
-to_email:currentUser.email,
-email:currentUser.email,
+await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID,{
+to_email:currentUser.email, email:currentUser.email,
+to_name:currentUser.name||'Client',
 client_name:currentUser.name||'',
 invite_names:f.names||'',
-package:pkg,
-price:rules.price,
-ref_code:ref,
-approve_url:'',
-decline_url:''
+package:pkg, price:rules.price, ref_code:ref,
+approve_url:'', decline_url:''
 });
-}catch(e){console.warn('Client confirm email:',e);}
+}catch(e){console.warn('Client confirm email:',e.text||e.message);}
 }
-showToast('Payment submitted! Opening your dashboard…','success',4000);
-/* goToDash: using top-level openDash */
-setTimeout(goToDash,600);
-} catch(e){
-console.error('submitPaymentRef error:',e);
-showToast('Saved! Please open your dashboard.','success',4000);
+
 closePaymentModal();
 try{closeModal();}catch(e){}
-setTimeout(()=>{if(currentUser)openDash();else openAuth(false,'login');},600);
+showToast('Payment submitted! Opening your dashboard…','success',4000);
+setTimeout(()=>openDash(),800);
+
+}catch(e){
+console.error('submitPaymentRef error:',e);
+showToast('Submission error — please try again','error',5000);
+}finally{
+if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
 }
-if(btn){btn.textContent='Submit Withdrawal Reference';btn.disabled=false;}
 }
 async function sendPaymentEmailToAdmin(data){
-const approveUrl=window.location.href.split('#')[0]+'#admin/approve/'+data.inviteId+'/'+data.refCode;
-const declineUrl=window.location.href.split('#')[0]+'#admin/decline/'+data.inviteId+'/'+data.refCode;
-if(EMAILJS_SERVICE_ID==='YOUR_EMAILJS_SERVICE_ID'){
-console.log('EmailJS not configured. Payment details:', data);
-return;
-}
+const base=window.location.href.split('#')[0];
+const approveUrl=base+'#admin/approve/'+data.inviteId+'/'+data.refCode;
+const declineUrl=base+'#admin/decline/'+data.inviteId+'/'+data.refCode;
 const nl='\n';
 const waMsg=
 '🔔 *New Awatu Payment Request*'+nl+
@@ -3046,33 +3059,49 @@ const waMsg=
 '*Email:* '+(data.clientEmail||'—')+nl+
 '*Invite:* '+data.inviteNames+nl+
 '*Package:* '+data.pkg+' · '+data.price+nl+
-'*Reference:* '+data.refCode+nl+
+'*Ref #:* '+data.refCode+nl+
 '*Date:* '+(data.date||'—')+nl+
 '*Venue:* '+(data.venue||'—')+nl+nl+
-'✅ APPROVE (tap to unlock):'+nl+approveUrl+nl+nl+
+'✅ APPROVE:'+nl+approveUrl+nl+nl+
 '❌ DECLINE:'+nl+declineUrl;
+// Store message on payment record
 _sb.from('payments').update({wa_message:waMsg}).eq('invite_id',data.inviteId||'').catch(()=>{});
-showPaymentNotificationBar(waMsg, approveUrl, declineUrl);
-if(window.location.protocol!=='file:'){
-try {
-if(window.emailjs){
-const result=await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-to_email:AWATU_ADMIN_EMAIL, email:AWATU_ADMIN_EMAIL,
-to_name:'Mwewa', from_name:data.clientName||'Client',
+// Show in-page notification bar
+showPaymentNotificationBar(waMsg,approveUrl,declineUrl);
+// Send email — retry up to 3 times if emailjs not ready yet
+const sendEmail=async(attempt=1)=>{
+if(!window.emailjs){
+if(attempt<4){await new Promise(r=>setTimeout(r,attempt*800));return sendEmail(attempt+1);}
+console.warn('EmailJS not available after retries');return;
+}
+try{
+const result=await window.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+to_email:AWATU_ADMIN_EMAIL,
+email:AWATU_ADMIN_EMAIL,
+to_name:'Mwewa',
+from_name:data.clientName||'Client',
 reply_to:data.clientEmail||AWATU_ADMIN_EMAIL,
-client_name:data.clientName||'', client_email:data.clientEmail||'',
-invite_names:data.inviteNames||'', package:data.pkg||'',
-price:data.price||'', ref_code:data.refCode||'',
-event_date:data.date||'Not specified', venue:data.venue||'Not specified',
-design:data.design||'', approve_url:approveUrl,
-decline_url:declineUrl, invite_id:data.inviteId||''
+client_name:data.clientName||'',
+client_email:data.clientEmail||'',
+invite_names:data.inviteNames||'',
+package:data.pkg||'',
+price:data.price||'',
+ref_code:data.refCode||'',
+event_date:data.date||'Not specified',
+venue:data.venue||'Not specified',
+design:data.design||'',
+approve_url:approveUrl,
+decline_url:declineUrl,
+invite_id:data.inviteId||''
 });
-console.log('Email sent:', result.status);
+console.log('Admin email sent ✓ status:',result.status);
+}catch(e){
+console.error('EmailJS send failed (attempt '+attempt+'):',e.text||e.message||e);
+if(attempt<3){await new Promise(r=>setTimeout(r,1500));return sendEmail(attempt+1);}
+showToast('Email notification failed — WhatsApp link still available','error',5000);
 }
-} catch(e){
-console.error('EmailJS error:', e.text||e.message||e);
-}
-}
+};
+await sendEmail();
 }
 function showPaymentNotificationBar(waMsg, approveUrl, declineUrl){
 const existing=document.getElementById('payNotifBar');
@@ -3955,24 +3984,27 @@ pb.innerHTML=rows.length?rows.map(p=>`
 <td style="font-weight:700;color:#1c1917;">${p.amount||'-'}</td>
 <td style="font-family:monospace;font-size:12px;color:#78716c;">${p.ref_code||'-'}</td>
 <td><span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;${p.status==='approved'?'background:rgba(91,168,114,.12);color:#166534;':'background:rgba(240,165,0,.12);color:#b45309;'}">${p.status==='approved'?'✓ Approved':'⏳ Pending'}</span></td>
-<td>${(p.user_id===currentUser?.id&&p.status==='pending')?'<span style="color:#b45309;font-size:11px;">⏳ Awaiting</span>':(p.status==='approved'?'<span style="color:#166534;font-size:11px;">✓ Approved</span>':p.status==='pending'?`<button onclick="adminApprovePayment('${p.id}','${p.user_id}','${p.design_key||''}','${p.ref_code}')" style="padding:5px 12px;background:#1c1917;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">Approve</button>`:'<span style="color:#78716c;font-size:11px;">Done</span>')}</td>
+<td>${(p.user_id===currentUser?.id&&p.status==='pending')?'<span style="color:#b45309;font-size:11px;">⏳ Awaiting</span>':(p.status==='approved'?'<span style="color:#166534;font-size:11px;">✓ Approved</span>':p.status==='pending'?`<button onclick="adminApprovePayment('${p.id}','${p.user_id}','${p.design_key||''}','${p.ref_code}','${p.invite_id||''}')" style="padding:5px 12px;background:#1c1917;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;">Approve</button>`:'<span style="color:#78716c;font-size:11px;">Done</span>')}</td>
 </tr>`).join('')
 :'<tr><td colspan="6" style="text-align:center;padding:28px;color:#78716c;font-style:italic;">No payment requests yet</td></tr>';
 } catch(e){
 pb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#78716c;">Payments table not set up yet — run the SQL in Supabase</td></tr>';
 }
 }
-async function adminApprovePayment(paymentId,userId,designKey,refCode){
-if(!confirm('Approve payment? Ref: '+refCode)) return;
-const {error}=await _sb.from('payments').update({status:'approved'}).eq('id',paymentId);
-if(error){showToast('Error: '+error.message,'error');return;}
-// Also update the matching event record so "awaiting payment" badge clears
-await _sb.from('events').update({payment_status:'approved'})
-  .eq('user_id',userId).eq('payment_status','pending').catch(e=>console.warn('event status update:',e));
+async function adminApprovePayment(paymentId,userId,designKey,refCode,inviteId){
+if(!confirm('Approve payment?\nRef: '+refCode+'\nThis will allow the client to send their invitation.')) return;
+const {error:payErr}=await _sb.from('payments').update({status:'approved'}).eq('id',paymentId);
+if(payErr){showToast('Error: '+payErr.message,'error');return;}
+// Update event record to approved using invite_id (most precise match)
+if(inviteId){
+await _sb.from('events').update({payment_status:'approved'}).eq('invite_id',inviteId).catch(e=>console.warn('event update:',e));
+} else {
+await _sb.from('events').update({payment_status:'approved'}).eq('user_id',userId).eq('payment_status','pending').catch(e=>console.warn('event update:',e));
+}
 const tempId='pending_'+userId+'_'+designKey;
-const invId='inv_'+userId+'_'+designKey;
-_paymentState[tempId]={status:'approved',refCode,ts:Date.now()};
-_paymentState[invId]={status:'approved',refCode,ts:Date.now(),inviteId:designKey};
+const invId='inv_'+userId+'_'+(inviteId||designKey);
+_paymentState[tempId]={status:'approved',refCode,ts:Date.now(),inviteId:inviteId||''};
+_paymentState[invId]={status:'approved',refCode,ts:Date.now(),inviteId:inviteId||''};
 savePaymentState();
 showToast('Payment approved! Client can now send their invite 🎉','success');
 loadPaymentsPanel();
@@ -4222,7 +4254,7 @@ function loadDashOverview(){
   const u=currentUser,hr=new Date().getHours();
   const dg=document.getElementById('dashGreeting');if(dg)dg.textContent=(hr<12?'Good morning, ':hr<17?'Good afternoon, ':'Good evening, ')+u.name+' ✦';
   const eg=document.getElementById('dashEvents');
-  if(eg && (!eg.dataset.loaded)){openDash();}
+  if(eg){openDash();}
 }
 
 function closeDash(){
