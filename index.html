@@ -3741,57 +3741,75 @@ if(pwInput && rs) pwInput.value='';
 }
 function toggleAuthMode(){setAuthMode(authMode==='signup'?'login':'signup');}
 async function submitAuth(){
-const email=$('authEmail')?.value.trim(),pw=$('authPassword')?.value,name=authMode==='signup'?$('authName')?.value.trim():'';
+const email=$('authEmail')?.value.trim();
+const pw=$('authPassword')?.value;
+const name=authMode==='signup'?$('authName')?.value.trim():'';
+console.log('[Awatu] submitAuth called, mode:', authMode, 'email:', email);
+
 if(authMode==='reset'){
 if(!email||!email.includes('@')){showToast('Please enter a valid email');return;}
 const btn=$('authSubmit');if(btn){btn.textContent='Sending…';btn.disabled=true;}
-try {
+try{
 const {error}=await _sb.auth.resetPasswordForEmail(email,{
-redirectTo: window.location.href.split('?')[0]+'?reset=true'
+redirectTo:window.location.href.split('?')[0]+'?reset=true'
 });
-if(error){showToast(error.message);}
-else {
-closeAuth();
-showToast('Reset link sent! Check your email inbox.','success',5000);
-}
-} catch(e){showToast('Something went wrong. Try again.');}
+if(error){showToast(error.message,'error');}
+else{closeAuth();showToast('Reset link sent! Check your inbox.','success',5000);}
+}catch(e){showToast('Something went wrong: '+e.message,'error');}
 finally{const btn=$('authSubmit');if(btn){btn.textContent='Send Reset Link';btn.disabled=false;}}
 return;
 }
+
 if(authMode==='signup'&&!name){showToast('Please enter your name');return;}
 if(!email||!email.includes('@')){showToast('Please enter a valid email');return;}
 if(!pw||pw.length<6){showToast('Password must be at least 6 characters');return;}
-const btn=$('authSubmit');if(btn){btn.textContent='Please wait…';btn.disabled=true;}
-try {
+
+const btn=$('authSubmit');
+if(btn){btn.textContent='Please wait…';btn.disabled=true;}
+
+try{
 if(authMode==='signup'){
+console.log('[Awatu] Signing up...');
 const {data,error}=await _sb.auth.signUp({email,password:pw});
 if(error){
-if(error.message.toLowerCase().includes('already registered')||error.message.toLowerCase().includes('already exists')){
-showToast('An account with this email already exists — sign in instead');
-setAuthMode('login');
-} else { showToast(error.message); }
-return;
+console.error('[Awatu] Signup error:', error.message);
+showToast(error.message,'error');return;
 }
-if(data.user){
-await _sb.from('profiles').upsert({id:data.user.id,name,email});
-currentUser={id:data.user.id,name,email};
+if(data?.user){
+await _sb.from('profiles').upsert({id:data.user.id,name:name||email.split('@')[0],email}).catch(e=>console.warn('Profile upsert:',e));
+currentUser={id:data.user.id,name:name||email.split('@')[0],email};
 updateSidebarUser();closeAuth();
-showToast(`Welcome, ${name}! 🎉`,'success');
+showToast('Welcome, '+(name||email.split('@')[0])+'! 🎉','success');
 setTimeout(()=>{if(authAfterEvent)openEventForm({startAt:'design'});else openDash();},400);
-} else {
+}else{
 showToast('Check your email to confirm your account!','success');closeAuth();
 }
-} else {
+}else{
+console.log('[Awatu] Signing in...');
 const {data,error}=await _sb.auth.signInWithPassword({email,password:pw});
-if(error){showToast('Incorrect email or password');return;}
-const {data:profile}=await _sb.from('profiles').select('*').eq('id',data.user.id).single();
-currentUser=profile?{...profile,id:data.user.id}:{id:data.user.id,name:email.split('@')[0],email};
+if(error){
+console.error('[Awatu] Login error:', error.message);
+showToast('Incorrect email or password — '+error.message,'error');return;
+}
+console.log('[Awatu] Login success, user:', data.user.id);
+let profile=null;
+try{
+const {data:p}=await _sb.from('profiles').select('*').eq('id',data.user.id).single();
+profile=p;
+}catch(e){console.warn('[Awatu] Profile fetch:',e);}
+currentUser=profile
+?{...profile,id:data.user.id,email:data.user.email}
+:{id:data.user.id,name:email.split('@')[0],email:data.user.email||email};
 updateSidebarUser();closeAuth();
-showToast(`Welcome back, ${currentUser.name}!`,'success');
+showToast('Welcome back, '+currentUser.name+'!','success');
 setTimeout(()=>{if(authAfterEvent)openEventForm({startAt:'design'});else openDash();},400);
 }
-} catch(e){showToast('Something went wrong. Try again.');}
-finally{if(btn){btn.textContent=authMode==='signup'?'Create Account':'Sign In';btn.disabled=false;}}
+}catch(e){
+console.error('[Awatu] submitAuth crash:', e);
+showToast('Error: '+e.message,'error',6000);
+}finally{
+if(btn){btn.textContent=authMode==='signup'?'Create Account':'Sign In';btn.disabled=false;}
+}
 }
 function signInWithGoogle(){
 _sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}})
