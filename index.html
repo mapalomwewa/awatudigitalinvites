@@ -1943,11 +1943,24 @@ const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
 });
 // Auto-refresh expired sessions
 _sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'TOKEN_REFRESHED') {
-    console.log('[Awatu] Session token refreshed');
-  }
+  console.log('[Awatu] Auth event:', event);
   if (event === 'SIGNED_OUT') {
     currentUser = null;
+    updateSidebarUser();
+  }
+  if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && session?.user) {
+    // Always re-fetch profile and update currentUser with fresh session
+    try {
+      const {data:profile} = await _sb.from('profiles').select('*').eq('id', session.user.id).single();
+      currentUser = profile
+        ? {...profile, id:session.user.id, email:session.user.email}
+        : {id:session.user.id, name:session.user.email.split('@')[0], email:session.user.email};
+      updateSidebarUser();
+      console.log('[Awatu] currentUser updated:', currentUser.email);
+    } catch(e) {
+      currentUser = {id:session.user.id, name:session.user.email.split('@')[0], email:session.user.email};
+      updateSidebarUser();
+    }
   }
 });
 const PKG_RULES={
@@ -1993,15 +2006,27 @@ setTimeout(tryInit,500);
 tryInit();
 })();
 (async () => {
-const { data: { session } } = await _sb.auth.getSession();
-if (session?.user) {
-const { data: profile } = await _sb.from('profiles').select('*').eq('id', session.user.id).single();
-currentUser = profile ? { ...profile, id: session.user.id } : { id: session.user.id, name: session.user.email.split('@')[0], email: session.user.email };
-updateSidebarUser();
-const hash = window.location.hash;
-if(hash.includes('type=recovery') || new URLSearchParams(window.location.search).get('reset')==='true') {
-setTimeout(()=>openNewPasswordModal(), 500);
-}
+try {
+  const { data: { session }, error: sesErr } = await _sb.auth.getSession();
+  if (sesErr) console.warn('[Awatu] getSession error:', sesErr.message);
+  if (session?.user) {
+    try {
+      const { data: profile } = await _sb.from('profiles').select('*').eq('id', session.user.id).single();
+      currentUser = profile
+        ? { ...profile, id: session.user.id, email: session.user.email }
+        : { id: session.user.id, name: session.user.email.split('@')[0], email: session.user.email };
+    } catch(e) {
+      currentUser = { id: session.user.id, name: session.user.email.split('@')[0], email: session.user.email };
+    }
+    updateSidebarUser();
+    console.log('[Awatu] Loaded user:', currentUser.email);
+    const hash = window.location.hash;
+    if(hash.includes('type=recovery') || new URLSearchParams(window.location.search).get('reset')==='true') {
+      setTimeout(()=>openNewPasswordModal(), 500);
+    }
+  }
+} catch(e) {
+  console.warn('[Awatu] Init error:', e.message);
 }
 setTimeout(()=>{checkInviteHash();checkAdminHash();}, 400);
 })();
@@ -2964,26 +2989,27 @@ if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.textContent='Saving…';btn.disabled=true;}
 try{
-// Refresh session token before DB operations
+// Ensure fresh session before DB operations
 try{
-  const {data:{session}, error:sesErr} = await _sb.auth.getSession();
-  if(sesErr || !session){
-    showToast('Session expired — please sign in again','error',5000);
+  const {data:{session}} = await _sb.auth.getSession();
+  if(!session){
+    showToast('Please sign in to submit payment','error',5000);
     if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
     openAuthModal();
     return;
   }
-  // Force token refresh if close to expiry
-  const expiresAt = session.expires_at || 0;
-  const now = Math.floor(Date.now()/1000);
-  if(expiresAt - now < 300){
-    await _sb.auth.refreshSession();
-    console.log('[Awatu] Session refreshed');
-  }
-}catch(e){console.warn('[Awatu] Session check:',e);}
+  // Always refresh to get a valid token
+  await _sb.auth.refreshSession();
+}catch(e){console.warn('[Awatu] Session refresh:',e.message);}
+// Get currentUser from session if not set
 if(!currentUser){
-showToast('Please sign in to submit payment','error',5000);
-return;
+  const {data:{session}} = await _sb.auth.getSession().catch(()=>({data:{session:null}}));
+  if(session?.user){
+    currentUser = {id:session.user.id, name:session.user.email.split('@')[0], email:session.user.email};
+  } else {
+    showToast('Please sign in to continue','error',5000);
+    return;
+  }
 }
 const pkg=customFields._pkg||bkState.pkg||'Standard';
 const rules=getPkgRules(pkg);
