@@ -2944,7 +2944,6 @@ const overlay=document.getElementById('paymentOverlay');
 if(overlay){overlay.style.display='none';document.body.style.overflow='';}
 }
 async function submitPaymentRef(){
-console.log('[Awatu] submitPaymentRef called');
 const ref=document.getElementById('payRefInput')?.value.trim();
 if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
@@ -2952,7 +2951,6 @@ if(btn){btn.textContent='Saving…';btn.disabled=true;}
 try{
 if(!currentUser){
 showToast('Please sign in to submit payment','error',5000);
-if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
 return;
 }
 const pkg=customFields._pkg||bkState.pkg||'Standard';
@@ -2960,12 +2958,11 @@ const rules=getPkgRules(pkg);
 const inviteId=genInviteId();
 const f=customFields;
 const dateStr=f.date?new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
-const eventType=f.eyebrow?(f.eyebrow.replace(' Invitation','').trim()||'Event'):(bkState.event||'Event');
-console.log('[Awatu] pkg:',pkg,'inviteId:',inviteId,'names:',f.names,'type:',eventType);
+const eventType=(f.eyebrow||bkState.event||'Event').replace(' Invitation','').trim()||'Event';
 
-// Cache full invite data locally (includes bg_photo base64 — too big for DB)
+// Cache full invite locally (bg_photo stays local — too large for DB)
 try{
-const cached=JSON.stringify({
+localStorage.setItem('awatu_pending_invite_'+inviteId, JSON.stringify({
 id:inviteId,user_id:currentUser.id,design_key:activeDesignKey||'',
 names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
 venue:f.venue||'',tagline:f.tagline||'',location:f.location||'',
@@ -2973,13 +2970,11 @@ map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
 bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
 accent_color:f.accentColor||null,deadline:f.deadline||null,
 start_time:f.startTime||null,end_time:f.endTime||null,
-pkg:pkg,invite_body:buildInviteHTML()
-});
-localStorage.setItem('awatu_pending_invite_'+inviteId,btoa(unescape(encodeURIComponent(cached))));
-}catch(e){console.warn('[Awatu] Local cache failed:',e);}
+pkg,invite_body:buildInviteHTML()
+}));
+}catch(e){}
 
-// ── Save invite record — NO bg_photo, NO invite_body (too large for DB) ──────
-console.log('[Awatu] Saving invite…');
+// ── Save invite to DB (no bg_photo — too large) ──────────────────────────────
 const {error:invErr}=await _sb.from('invites').insert({
 id:inviteId,user_id:currentUser.id,
 design_key:activeDesignKey||'',
@@ -2995,12 +2990,9 @@ start_time:f.startTime||null,
 end_time:f.endTime||null,
 status:'pending_payment'
 });
-if(invErr){console.error('[Awatu] Invite error:',invErr.code,invErr.message);}
-else{console.log('[Awatu] Invite saved ✓');}
+if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
 
-// ── Save event record ─────────────────────────────────────────────────────────
-console.log('[Awatu] Saving event…');
-// Try with extra columns first; fall back to core columns if schema mismatch
+// ── Save event to DB ──────────────────────────────────────────────────────────
 const _evBase={
 user_id:currentUser.id,
 name:f.names||bkState.names||'Untitled',
@@ -3008,141 +3000,45 @@ type:eventType,
 design:activeDesignKey||'',
 date:dateStr,
 venue:f.venue||bkState.venue||'',
-pkg:pkg,
-sent:0,accepted:0,declined:0
+pkg,sent:0,accepted:0,declined:0
 };
-let evErr=null;
-// Attempt 1: with payment_status + invite_id columns
-const {error:evErr1}=await _sb.from('events').insert({..._evBase});
+const {error:evErr1}=await _sb.from('events').insert({..._evBase,payment_status:'pending',invite_id:inviteId});
 if(evErr1){
-console.warn('[Awatu] Extended insert failed ('+evErr1.code+'), trying base columns…');
-// Attempt 2: core columns only — works even if payment_status/invite_id don't exist yet
 const {error:evErr2}=await _sb.from('events').insert(_evBase);
-evErr=evErr2;
-if(evErr2){
-console.error('[Awatu] Event error:',evErr2.code,evErr2.message,evErr2.details);
-showToast('Event DB error ('+evErr2.code+'): '+evErr2.message,'error',8000);
-}else{
-console.log('[Awatu] Event saved ✓ (base columns)');
-// Store invite_id locally for reference
-try{localStorage.setItem('awatu_event_invite_'+currentUser.id,inviteId);}catch(e){}
+if(evErr2) console.warn('Event save:',evErr2.code,evErr2.message);
 }
-}else{console.log('[Awatu] Event saved ✓ (full columns)');}
 
-// ── Save payment record ───────────────────────────────────────────────────────
-console.log('[Awatu] Saving payment…');
+// ── Save payment to DB ────────────────────────────────────────────────────────
 const {error:payErr}=await _sb.from('payments').insert({
 user_id:currentUser.id,pkg,
 amount:rules.price,ref_code:ref,
-status:'pending',invite_name:f.names||'',
+status:'pending',
+invite_name:f.names||'',
 design_key:activeDesignKey||'',
 invite_id:inviteId,
 client_email:currentUser.email||''
 });
-if(payErr){console.error('[Awatu] Payment error:',payErr.code,payErr.message);}
-else{console.log('[Awatu] Payment saved ✓');}
+if(payErr) console.warn('Payment save:',payErr.code,payErr.message);
 
-// ── Update local payment state ────────────────────────────────────────────────
+// ── Update local state ────────────────────────────────────────────────────────
 const tempId='pending_'+currentUser.id+'_'+(activeDesignKey||'');
 _paymentState[tempId]={status:'pending',refCode:ref,pkg,price:rules.price,inviteId,ts:Date.now()};
 savePaymentState();
 
-// ── Send admin email ──────────────────────────────────────────────────────────
-console.log('[Awatu] Sending admin notification…');
-await sendPaymentEmailToAdmin({
-clientName:currentUser.name||'',
-clientEmail:currentUser.email||'',
-inviteNames:f.names||'',
-pkg,price:rules.price,refCode:ref,
-date:dateStr,venue:f.venue||'',
-design:activeDesignKey||'',inviteId
-});
-
-// ── Send client confirmation ──────────────────────────────────────────────────
-if(currentUser?.email&&window.emailjs){
-try{
-await window.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-to_email:currentUser.email,email:currentUser.email,
-to_name:currentUser.name||'',
-client_name:currentUser.name||'',
-invite_names:f.names||'',
-package:pkg,price:rules.price,ref_code:ref,
-approve_url:'',decline_url:''
-});
-console.log('[Awatu] Client confirmation email sent ✓');
-}catch(e){console.warn('[Awatu] Client email failed:',e.text||e.message);}
-}
-
+// ── Done — close modal, open dashboard ───────────────────────────────────────
 closePaymentModal();
 try{closeModal();}catch(e){}
-showToast('Payment submitted! Opening your dashboard…','success',4000);
-console.log('[Awatu] Complete — opening dashboard');
+showToast('Submitted! Your invite is pending approval.','success',5000);
 setTimeout(()=>openDash(),800);
 
 }catch(e){
-console.error('[Awatu] CRASH in submitPaymentRef:',e.message,e.stack);
-showToast('Error: '+e.message,'error',6000);
+console.error('submitPaymentRef error:',e);
+showToast('Error: '+e.message,'error',5000);
 }finally{
 if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
 }
 }
-async function sendPaymentEmailToAdmin(data){
-const base=window.location.href.split('#')[0];
-const approveUrl=base+'#admin/approve/'+data.inviteId+'/'+data.refCode;
-const declineUrl=base+'#admin/decline/'+data.inviteId+'/'+data.refCode;
-const nl='\n';
-const waMsg=
-'🔔 *New Awatu Payment Request*'+nl+
-'━━━━━━━━━━━━━━━━'+nl+
-'*Client:* '+data.clientName+nl+
-'*Email:* '+(data.clientEmail||'—')+nl+
-'*Invite:* '+data.inviteNames+nl+
-'*Package:* '+data.pkg+' · '+data.price+nl+
-'*Ref #:* '+data.refCode+nl+
-'*Date:* '+(data.date||'—')+nl+
-'*Venue:* '+(data.venue||'—')+nl+nl+
-'✅ APPROVE:'+nl+approveUrl+nl+nl+
-'❌ DECLINE:'+nl+declineUrl;
-// Store message on payment record
-_sb.from('payments').update({wa_message:waMsg}).eq('invite_id',data.inviteId||'').catch(()=>{});
-// Show in-page notification bar
-showPaymentNotificationBar(waMsg,approveUrl,declineUrl);
-// Send email — retry up to 3 times if emailjs not ready yet
-const sendEmail=async(attempt=1)=>{
-if(!window.emailjs){
-if(attempt<4){await new Promise(r=>setTimeout(r,attempt*800));return sendEmail(attempt+1);}
-console.warn('EmailJS not available after retries');return;
-}
-try{
-console.log('[Awatu] Calling emailjs.send to:',AWATU_ADMIN_EMAIL,'service:',EMAILJS_SERVICE_ID);
-const result=await window.emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-to_email:AWATU_ADMIN_EMAIL,
-email:AWATU_ADMIN_EMAIL,
-to_name:'Mwewa',
-from_name:data.clientName||'Client',
-reply_to:data.clientEmail||AWATU_ADMIN_EMAIL,
-client_name:data.clientName||'',
-client_email:data.clientEmail||'',
-invite_names:data.inviteNames||'',
-package:data.pkg||'',
-price:data.price||'',
-ref_code:data.refCode||'',
-event_date:data.date||'Not specified',
-venue:data.venue||'Not specified',
-design:data.design||'',
-approve_url:approveUrl,
-decline_url:declineUrl,
-invite_id:data.inviteId||''
-});
-console.log('Admin email sent ✓ status:',result.status);
-}catch(e){
-console.error('EmailJS send failed (attempt '+attempt+'):',e.text||e.message||e);
-if(attempt<3){await new Promise(r=>setTimeout(r,1500));return sendEmail(attempt+1);}
-showToast('Email notification failed — WhatsApp link still available','error',5000);
-}
-};
-await sendEmail();
-}
+async function sendPaymentEmailToAdmin(data){/* email disabled — approve via Supabase dashboard */}
 function showPaymentNotificationBar(waMsg, approveUrl, declineUrl){
 const existing=document.getElementById('payNotifBar');
 if(existing)existing.remove();
