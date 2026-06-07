@@ -4496,9 +4496,12 @@ async function submitAuth(){
         .catch(()=>{});
     }
   } catch(e){
+    console.error('[Awatu] submitAuth error:', e);
     showToast('Error: ' + e.message, 'error', 5000);
+    closeAuth();
   } finally {
     if(btn){ btn.textContent = authMode==='signup'?'Create Account':'Sign In'; btn.disabled = false; }
+    closeAuth();
   }
 }
 // ── END AUTH ──────────────────────────────────────────────────────────────────
