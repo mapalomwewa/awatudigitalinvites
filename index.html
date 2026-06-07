@@ -1934,7 +1934,22 @@ const SAMPLE_RSVPS=[
 ];
 const SUPABASE_URL = 'https://cgrulhgqburflnjnqyyt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_EfPqHSn_dnzPuoeP8usFJg_JG1tSxz-';
-const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
+// Auto-refresh expired sessions
+_sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'TOKEN_REFRESHED') {
+    console.log('[Awatu] Session token refreshed');
+  }
+  if (event === 'SIGNED_OUT') {
+    currentUser = null;
+  }
+});
 const PKG_RULES={
 Basic:{photoUpload:false,photoMaxMB:0,music:false,allDesigns:false,label:'Basic',price:'K300'},
 Standard:{photoUpload:true,photoMaxMB:5,music:false,allDesigns:false,label:'Standard',price:'K650'},
@@ -2949,6 +2964,23 @@ if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.textContent='Saving…';btn.disabled=true;}
 try{
+// Refresh session token before DB operations
+try{
+  const {data:{session}, error:sesErr} = await _sb.auth.getSession();
+  if(sesErr || !session){
+    showToast('Session expired — please sign in again','error',5000);
+    if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
+    openAuthModal();
+    return;
+  }
+  // Force token refresh if close to expiry
+  const expiresAt = session.expires_at || 0;
+  const now = Math.floor(Date.now()/1000);
+  if(expiresAt - now < 300){
+    await _sb.auth.refreshSession();
+    console.log('[Awatu] Session refreshed');
+  }
+}catch(e){console.warn('[Awatu] Session check:',e);}
 if(!currentUser){
 showToast('Please sign in to submit payment','error',5000);
 return;
@@ -2987,8 +3019,7 @@ font_color:f.fontColor||null,
 accent_color:f.accentColor||null,
 deadline:f.deadline||null,
 start_time:f.startTime||null,
-end_time:f.endTime||null,
-status:'pending_payment'
+end_time:f.endTime||null
 });
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
 
