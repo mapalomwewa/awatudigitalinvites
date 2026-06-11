@@ -2277,6 +2277,8 @@ const pi=$('custPhotoInput');
 if(pi) pi.addEventListener('change',e=>custHandlePhotos(e.target.files));
 setTimeout(initColorPickers, 50);
 if(typeof window.attachCursorHover==='function')window.attachCursorHover();
+
+try{applyCustPkgRules();}catch(_){}
 }
 function getDesignColors(){
 const inv=invites[activeDesignKey]||{};
@@ -2385,7 +2387,7 @@ Use my location
 <div class="cust-label">RSVP Deadline <span style="font-weight:300;opacity:.55;">(optional)</span></div>
 <input class="cust-input" type="date" id="custDeadline" placeholder="Respond by..." oninput="customFields.deadline=this.value">
 </div>
-<div class="cust-section" id="custMusicSection" style="display:none;">
+<div class="cust-section" id="custMusicSection" style="display:block;">
 <div class="cust-label">🎵 Background Music <span style="font-size:10px;font-weight:600;color:#c8a050;background:rgba(200,160,80,.1);padding:2px 7px;border-radius:20px;margin-left:4px;">Custom</span></div>
 <div id="custMusicLocked" style="display:none;"></div>
 <div id="custMusicUnlocked">
@@ -3070,8 +3072,21 @@ img.src=dataUrl;
 }
 // ── Link payload: never embed photos/HTML — keeps links short & WhatsApp-safe ──
 function encodeInviteForLink(inv){
-const slim={...inv};
-delete slim.bg_photo;delete slim.invite_body;delete slim.bg_music;delete slim.photos;
+// Generic guard: links carry only small text fields — never media, HTML, or blobs,
+// regardless of what the field is called (bg_photo, bgPhoto, _encoded, photos, …)
+const slim={};
+Object.keys(inv||{}).forEach(k=>{
+const v=inv[k];
+if(v===null||v===undefined)return;
+const t=typeof v;
+if(t==='string'){
+if(v.length>2000||v.startsWith('data:'))return;
+slim[k]=v;
+}else if(t==='number'||t==='boolean'){
+slim[k]=v;
+}
+// arrays & objects (photo galleries, nested junk) are never embedded
+});
 return btoa(unescape(encodeURIComponent(JSON.stringify(slim))));
 }
 async function submitPaymentRef(){
@@ -3401,8 +3416,8 @@ return body;
 }
 function openShareModal(inviteId,data,encoded){
 const base=window.location.href.split('#')[0];
-const enc=encoded||data._encoded||encodeInviteForLink(data);
-const link=base+'#invite/'+inviteId+'/'+enc;
+// Bare-ID link — the invitation loads from the database; nothing travels in the URL
+const link=base+'#invite/'+inviteId;
 const overlay=document.getElementById('shareOverlay');
 const linkEl=document.getElementById('shareLinkText');
 const nameEl=document.getElementById('shareInviteName');
