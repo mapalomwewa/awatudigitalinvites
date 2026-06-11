@@ -2009,6 +2009,7 @@ try {
   if (session?.user) {
     // Set user immediately from session — fetch profile in background
 currentUser = { id: session.user.id, name: session.user.email.split('@')[0], email: session.user.email };
+ensureProfile();
 _sb.from('profiles').select('*').eq('id', session.user.id).single()
   .then(({data:profile}) => {
     if(profile){ currentUser = {...profile, id:session.user.id, email:session.user.email}; updateSidebarUser(); }
@@ -2979,6 +2980,18 @@ function closePaymentModal(){
 const overlay=document.getElementById('paymentOverlay');
 if(overlay){overlay.style.display='none';document.body.style.overflow='';}
 }
+async function ensureProfile(){
+if(!currentUser||!currentUser.id)return false;
+try{
+const {error}=await _sb.from('profiles').upsert({
+id:currentUser.id,
+name:currentUser.name||String(currentUser.email||'').split('@')[0],
+email:currentUser.email||''
+},{onConflict:'id'});
+if(error){console.error('[Awatu] ensureProfile:',error.code,error.message);return false;}
+return true;
+}catch(e){console.error('[Awatu] ensureProfile crash:',e);return false;}
+}
 async function submitPaymentRef(){
 const ref=document.getElementById('payRefInput')?.value.trim();
 if(!ref){showToast('Please enter your payment reference number');return;}
@@ -3028,6 +3041,9 @@ pkg,invite_body:buildInviteHTML()
 }));
 }catch(e){}
 
+// Make sure the profile row exists (FK target for events/payments/invites)
+const _profOk=await ensureProfile();
+if(!_profOk)showToast('Profile sync issue — see connection test','error',4000);
 // ── Save invite to DB (no bg_photo — too large) ──────────────────────────────
 const {error:invErr}=await _sb.from('invites').insert({
 id:inviteId,user_id:currentUser.id,
@@ -4089,6 +4105,17 @@ else add('Read '+t,true,(data?data.length:0)+' row(s) visible');
 }catch(e){add('Read '+t,false,e.message);}
 }
 
+// 3b. Profile row existence (FK target)
+if(uid){
+try{
+const {data:prof,error}=await _sb.from('profiles').select('id').eq('id',uid).single();
+if(error&&error.code!=='PGRST116')add('My profile row',false,(error.code||'')+' '+error.message);
+else if(!prof){
+const ok=await ensureProfile();
+add('My profile row', ok, ok?'was missing — created now ✓':'MISSING and could not create');
+}else add('My profile row',true,'exists');
+}catch(e){add('My profile row',false,e.message);}
+}
 // 4. Write probe: insert + delete a marked test row in payments
 if(uid){
 try{
@@ -4706,6 +4733,7 @@ async function submitAuth(){
       currentUser = {id:data.user.id, name:email.split('@')[0], email:data.user.email||email};
       updateSidebarUser();
       closeAuth();
+      ensureProfile();
       showToast('Welcome back!', 'success');
       setTimeout(()=>{ if(authAfterEvent) openEventForm({startAt:'design'}); else openDash(); }, 500);
       // Update name from profile in background
