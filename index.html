@@ -2666,7 +2666,7 @@ card.innerHTML=buildPreviewInner();
 function custHandleMusic(input){
 const file=input.files[0];
 if(!file)return;
-if(file.size>10*1024*1024){showToast('Music file too large — max 10MB','error');input.value='';return;}
+if(file.size>2.5*1024*1024){showToast('Music file too large — max 2.5MB (about 2 minutes of MP3). Tip: trim or compress the track.','error',5500);input.value='';return;}
 const reader=new FileReader();
 reader.onload=e=>{
 customFields.bgMusic=e.target.result;
@@ -2954,6 +2954,7 @@ const payStep=document.getElementById('payStepPay');
 if(step==='pkg'){
 if(pkgStep)pkgStep.style.display='block';
 if(payStep)payStep.style.display='none';
+applyPkgSelectability();
 } else {
 if(pkgStep)pkgStep.style.display='none';
 if(payStep)payStep.style.display='block';
@@ -2969,7 +2970,63 @@ const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.disabled=true;btn.textContent='Submit Withdrawal Reference';}
 }
 }
+// ── Which packages qualify for the features this client actually used ──
+function getPkgLockInfo(){
+const order=['Basic','Standard','Gold','Custom'];
+const usedPhotos=!!(customFields.bgPhoto||(customFields.photos&&customFields.photos.length));
+const usedMusic=!!customFields.bgMusic;
+const info={};
+order.forEach(pkg=>{
+const rules=getPkgRules(pkg);
+let locked=false,reason='';
+if(usedMusic&&!rules.music){locked=true;reason='Your invitation includes music — Custom package only';}
+else if(usedPhotos&&!rules.photoUpload){locked=true;reason='Your invitation includes uploaded photos — Standard & above';}
+else if(activeDesignKey&&!getPkgDesigns(pkg).includes(activeDesignKey)){locked=true;reason='Your chosen design is not in this package';}
+info[pkg]={locked,reason};
+});
+return info;
+}
+function applyPkgSelectability(){
+const info=getPkgLockInfo();
+let firstAllowed=null;
+document.querySelectorAll('.pay-pkg-option').forEach(el=>{
+const pkg=el.dataset.pkg;
+const st=info[pkg]||{locked:false};
+let note=el.querySelector('.pay-pkg-locknote');
+if(st.locked){
+el.style.opacity='.45';
+el.style.background='#faf9f7';
+el.style.borderColor='#eceae6';
+el.dataset.locked='1';
+if(!note){
+note=document.createElement('div');
+note.className='pay-pkg-locknote';
+note.style.cssText='font-family:Inter,sans-serif;font-size:10px;font-weight:600;color:#b45309;margin-top:6px;display:flex;align-items:center;gap:5px;';
+el.querySelector('div')?.appendChild(note);
+}
+note.innerHTML='🔒 '+st.reason;
+}else{
+el.style.opacity='1';
+el.dataset.locked='';
+if(note)note.remove();
+if(!firstAllowed)firstAllowed=pkg;
+}
+});
+// If the current selection is locked, move to the first qualifying package
+const cur=customFields._pkg;
+if(cur&&info[cur]&&info[cur].locked&&firstAllowed){
+selectPaymentPkg(firstAllowed);
+showToast('Package updated to '+firstAllowed+' — it covers the features you used','',4000);
+}
+}
 function selectPaymentPkg(pkg){
+try{
+const info=getPkgLockInfo();
+if(info[pkg]&&info[pkg].locked){
+showToast(info[pkg].reason,'error',4500);
+return;
+}
+}catch(e){}
 customFields._pkg=pkg;
 document.querySelectorAll('.pay-pkg-option').forEach(el=>{
 el.style.borderColor=el.dataset.pkg===pkg?'#1c1917':'#e5e1dc';
@@ -3089,11 +3146,18 @@ start_time:f.startTime||null,
 end_time:f.endTime||null
 };
 if(f.bgPhoto&&String(f.bgPhoto).startsWith('data:image')&&f.bgPhoto.length<900000)_invRow.bg_photo=f.bgPhoto;
+if(f.bgMusic&&String(f.bgMusic).startsWith('data:audio')&&f.bgMusic.length<3600000)_invRow.bg_music=f.bgMusic;
 let {error:invErr}=await _sb.from('invites').insert(_invRow);
+if(invErr&&(_invRow.bg_music||_invRow.bg_photo)){
+console.warn('Invite save with media failed ('+invErr.message+') — retrying lighter');
+if(_invRow.bg_music){
+delete _invRow.bg_music;
+({error:invErr}=await _sb.from('invites').insert(_invRow));
+}
 if(invErr&&_invRow.bg_photo){
-console.warn('Invite save with photo failed ('+invErr.message+') — retrying without photo');
 delete _invRow.bg_photo;
 ({error:invErr}=await _sb.from('invites').insert(_invRow));
+}
 }
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
 
