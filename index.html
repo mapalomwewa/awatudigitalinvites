@@ -3081,7 +3081,21 @@ savePaymentState();
 // ── Done — close modal, open dashboard ───────────────────────────────────────
 closePaymentModal();
 try{closeModal();}catch(e){}
+const _fails=[];
+if(typeof invErr!=='undefined'&&invErr)_fails.push('invites: '+(invErr.code||'')+' '+invErr.message);
+if(typeof evErr1!=='undefined'&&evErr1&&typeof evErr2!=='undefined'&&evErr2)_fails.push('events: '+(evErr2.code||'')+' '+evErr2.message);
+if(typeof payErr!=='undefined'&&payErr)_fails.push('payments: '+(payErr.code||'')+' '+payErr.message);
+if(_fails.length){
+setTimeout(()=>{
+const b=document.createElement('div');
+b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999998;background:#991b1b;color:#fff;font-family:Inter,sans-serif;font-size:12px;padding:12px 44px 12px 16px;line-height:1.5;';
+b.innerHTML='⚠️ Some data could not be saved — '+_fails.join(' · ').replace(/</g,'&lt;')+'<span onclick="this.parentNode.remove()" style="position:absolute;right:14px;top:10px;cursor:pointer;font-size:16px;">✕</span>';
+document.body.appendChild(b);
+},900);
+showToast('Submitted with warnings — see the red banner','error',5000);
+}else{
 showToast('Submitted! Your invite is pending approval.','success',5000);
+}
 setTimeout(()=>openDash(),800);
 
 }catch(e){
@@ -4038,6 +4052,78 @@ if(fixes.length)Promise.all(fixes).catch(e=>console.warn('count heal:',e));
 }catch(e){console.warn('syncEventCounts:',e);}
 return evList;
 }
+
+async function runAwatuDiagnostic(){
+const out=[];
+const add=(label,ok,detail)=>out.push({label,ok,detail:detail||''});
+let panel=document.getElementById('awatuDiagPanel');
+if(!panel){
+panel=document.createElement('div');
+panel.id='awatuDiagPanel';
+panel.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(20,16,12,.92);display:flex;align-items:center;justify-content:center;padding:20px;';
+document.body.appendChild(panel);
+}
+panel.innerHTML='<div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:24px;font-family:Inter,sans-serif;font-size:13px;">Running tests…</div>';
+panel.style.display='flex';
+
+// 1. Config
+add('App version','info', document.title?'deployed file OK':'');
+add('Supabase URL', true, SUPABASE_URL);
+add('Key type', SUPABASE_KEY.startsWith('eyJ')?true:false, SUPABASE_KEY.startsWith('eyJ')?'legacy anon (correct)':'publishable ('+SUPABASE_KEY.slice(0,18)+'…)');
+
+// 2. Session
+let uid=null, email=null;
+try{
+const {data:{session},error}=await _sb.auth.getSession();
+if(error) add('Auth session',false,error.message);
+else if(!session) add('Auth session',false,'No session — not signed in');
+else{uid=session.user.id;email=session.user.email;add('Auth session',true,email+' ('+uid.slice(0,8)+'…)');}
+}catch(e){add('Auth session',false,e.message);}
+
+// 3. Read each table
+for(const t of ['events','invites','payments','profiles','rsvps']){
+try{
+const {data,error}=await _sb.from(t).select('*').limit(1);
+if(error)add('Read '+t,false,(error.code||'')+' '+error.message);
+else add('Read '+t,true,(data?data.length:0)+' row(s) visible');
+}catch(e){add('Read '+t,false,e.message);}
+}
+
+// 4. Write probe: insert + delete a marked test row in payments
+if(uid){
+try{
+const {data:ins,error:insErr}=await _sb.from('payments').insert({user_id:uid,pkg:'DIAG',amount:'0',ref_code:'DIAG_TEST_DELETE_ME',status:'pending',invite_name:'(connection test)',client_email:email||''}).select();
+if(insErr)add('Write payments',false,(insErr.code||'')+' '+insErr.message);
+else{
+add('Write payments',true,'insert OK');
+if(ins&&ins[0]&&ins[0].id)await _sb.from('payments').delete().eq('id',ins[0].id);
+}
+}catch(e){add('Write payments',false,e.message);}
+try{
+const {data:ev,error:evErr}=await _sb.from('events').insert({user_id:uid,name:'(connection test)',type:'Diag',design:'',date:'',venue:'',pkg:'DIAG',sent:0,accepted:0,declined:0}).select();
+if(evErr)add('Write events',false,(evErr.code||'')+' '+evErr.message);
+else{
+add('Write events',true,'insert OK');
+if(ev&&ev[0]&&ev[0].id)await _sb.from('events').delete().eq('id',ev[0].id);
+}
+}catch(e){add('Write events',false,e.message);}
+// count MY events
+try{
+const {data:mine,error}=await _sb.from('events').select('id,name,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(5);
+if(error)add('My events query',false,(error.code||'')+' '+error.message);
+else add('My events query',true,(mine?mine.length:0)+' event(s): '+(mine||[]).map(m=>m.name).join(', ').slice(0,80));
+}catch(e){add('My events query',false,e.message);}
+}
+
+panel.innerHTML='<div style="background:#fff;border-radius:16px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px;font-family:Inter,sans-serif;">'
++'<div style="font-weight:700;font-size:15px;margin-bottom:14px;">Awatu Connection Test</div>'
++out.map(r=>'<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f0ede8;font-size:12px;">'
++'<span>'+(r.ok===true?'✅':r.ok==='info'?'ℹ️':'❌')+'</span>'
++'<span style="font-weight:600;min-width:110px;">'+r.label+'</span>'
++'<span style="color:#57534e;word-break:break-word;">'+String(r.detail).replace(/</g,'&lt;')+'</span></div>').join('')
++'<button onclick="document.getElementById(\'awatuDiagPanel\').style.display=\'none\'" style="margin-top:16px;padding:10px 18px;border-radius:10px;border:none;background:#1c1917;color:#fff;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Close</button>'
++'<button onclick="runAwatuDiagnostic()" style="margin-top:16px;margin-left:8px;padding:10px 18px;border-radius:10px;border:1px solid #1c1917;background:#fff;color:#1c1917;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Run again</button></div>';
+}
 async function openDash(){
 if(!currentUser){console.warn("[Awatu] openDash: no user, skipping redirect");return;}
 const ov=document.getElementById('dashOverlay');if(!ov)return;
@@ -4841,6 +4927,7 @@ async function submitAuth(){
         <div class="dash-topbar">
           <div class="dash-greeting" id="dashGreeting">Good morning ✦</div>
           <div class="dash-greeting-sub" id="dashGreetingSub">Here's what's happening with your invitations</div>
+          <div onclick="runAwatuDiagnostic()" style="margin-top:6px;font-family:Inter,sans-serif;font-size:11px;font-weight:600;color:#a8a29e;text-decoration:underline;cursor:pointer;display:inline-block;">🔧 Run connection test</div>
         </div>
 
         <div class="dash-featured">
