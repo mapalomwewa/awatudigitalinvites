@@ -3135,7 +3135,8 @@ map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
 bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
 accent_color:f.accentColor||null,deadline:f.deadline||null,
 start_time:f.startTime||null,end_time:f.endTime||null,
-pkg,invite_body:buildInviteHTML()
+pkg,invite_body:buildInviteHTML(),
+photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null
 }));
 }catch(e){}
 
@@ -3165,20 +3166,28 @@ const _galJson=JSON.stringify(_gal);
 if(_gal.length&&_galJson.length<1800000)_invRow.photos=_galJson;
 }
 let {error:invErr}=await _sb.from('invites').insert(_invRow);
-if(invErr&&(_invRow.photos||_invRow.bg_music||_invRow.bg_photo)){
-console.warn('Invite save with media failed ('+invErr.message+') — retrying lighter');
-if(_invRow.photos){
-delete _invRow.photos;
+// Column-resilient save: if the DB lacks a column (PGRST204), drop only
+// that column and retry — never silently lose unrelated media.
+let _guard=0;
+while(invErr&&_guard<8){
+const colMatch=String(invErr.message||'').match(/'([a-zA-Z_]+)' column|column "?([a-zA-Z_]+)"?/);
+const badCol=colMatch?(colMatch[1]||colMatch[2]):null;
+if((invErr.code==='PGRST204'||/column/i.test(invErr.message||''))&&badCol&&badCol in _invRow){
+console.warn('[Awatu] invites is missing column "'+badCol+'" — saving without it. Run the schema SQL to enable it.');
+window._awatuMissingCols=(window._awatuMissingCols||[]).concat(badCol);
+delete _invRow[badCol];
 ({error:invErr}=await _sb.from('invites').insert(_invRow));
-}
-if(invErr&&_invRow.bg_music){
-delete _invRow.bg_music;
+}else if(invErr&&(_invRow.photos||_invRow.bg_music||_invRow.bg_photo)){
+// size/other failure: shed heaviest first
+if(_invRow.photos)delete _invRow.photos;
+else if(_invRow.bg_music)delete _invRow.bg_music;
+else delete _invRow.bg_photo;
 ({error:invErr}=await _sb.from('invites').insert(_invRow));
+}else break;
+_guard++;
 }
-if(invErr&&_invRow.bg_photo){
-delete _invRow.bg_photo;
-({error:invErr}=await _sb.from('invites').insert(_invRow));
-}
+if(window._awatuMissingCols&&window._awatuMissingCols.length&&currentUser&&currentUser.email===ADMIN_EMAIL){
+showToast('⚠ Database is missing columns: '+[...new Set(window._awatuMissingCols)].join(', ')+' — run the schema SQL','error',8000);
 }
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
 
@@ -3362,7 +3371,14 @@ venue: f.venue||'',
 tagline: f.tagline||'',
 location: f.location||'',
 map_url: f.mapUrl||'',
-bg_photo: f.bgPhoto||null,
+bg_photo: (f.bgPhoto&&String(f.bgPhoto).startsWith('data:image')&&f.bgPhoto.length<900000)?f.bgPhoto:null,
+bg_music: (f.bgMusic&&String(f.bgMusic).startsWith('data:audio')&&f.bgMusic.length<3600000)?f.bgMusic:null,
+photos: (function(){try{
+if(!f.photos||!f.photos.length)return null;
+const g=f.photos.map(p=>p.data).filter(d=>String(d).startsWith('data:image')).slice(0,5);
+const j=JSON.stringify(g);
+return (g.length&&j.length<1800000)?j:null;
+}catch(e){return null;}})(),
 bg_opacity: f.bgOpacity||0.65,
 font_color: f.fontColor||null,
 accent_color: f.accentColor||null,
@@ -3535,10 +3551,34 @@ urlData=JSON.parse(decodeURIComponent(escape(atob(encodedData))));
 }
 // DB is the source of truth — it holds the photo and full preferences
 let dbData=null;
+let dbFresh=false;
+for(let attempt=0;attempt<2&&!dbData;attempt++){
 try{
 const {data:sbData}=await _sb.from('invites').select('*').eq('id',inviteId).maybeSingle();
-if(sbData) dbData=sbData;
-}catch(e){ console.warn('Invite fetch failed',e); }
+if(sbData){dbData=sbData;dbFresh=true;}
+else break; // row genuinely absent — don't retry
+}catch(e){
+console.warn('Invite fetch attempt '+(attempt+1)+' failed',e);
+if(attempt===0)await new Promise(r=>setTimeout(r,900));
+}
+}
+// Device cache: if the network failed, serve the last good copy from this phone
+if(!dbData){
+try{
+const cached=localStorage.getItem('awatu_gv_'+inviteId);
+if(cached){dbData=JSON.parse(cached);console.log('[Awatu] Invitation served from device cache');}
+}catch(e){}
+}
+// Save a fresh copy for future visits (prune older invites if storage is full)
+if(dbFresh){
+try{localStorage.setItem('awatu_gv_'+inviteId,JSON.stringify(dbData));}
+catch(qe){
+try{
+Object.keys(localStorage).filter(k=>k.startsWith('awatu_gv_')&&k!=='awatu_gv_'+inviteId).forEach(k=>localStorage.removeItem(k));
+localStorage.setItem('awatu_gv_'+inviteId,JSON.stringify(dbData));
+}catch(e){}
+}
+}
 let data=null;
 if(dbData&&urlData){
 data={...urlData};
@@ -3724,6 +3764,39 @@ gal.querySelectorAll('.gv-reveal').forEach(f=>f.classList.add('gv-revealed'));
 gal.style.display='none';
 }
 }
+// ── One response per invitation: returning guests see their answer ──
+try{
+const prev=localStorage.getItem('awatu_rsvp_'+data.id);
+if(prev){
+let saved=null;
+try{saved=JSON.parse(prev);}catch(_){saved={status:'responded'};}
+const rsvpSec=el('gvRsvpSection');
+const confirmed=el('gvConfirmed');
+if(rsvpSec)rsvpSec.style.display='none';
+if(confirmed){
+const icon=el('gvConfirmedIcon');
+const title=el('gvConfirmedTitle');
+const sub=el('gvConfirmedSub');
+const gName=saved.name||'friend';
+if(saved.status==='accepted'){
+if(icon)icon.textContent='🎉';
+if(title)title.textContent='You\u2019re on the guest list';
+if(sub)sub.textContent='Dear '+gName+', your attendance is confirmed. '+(data.names||'The hosts')+' can\u2019t wait to see you.';
+const calSec=el('gvCalSection');
+if(calSec)calSec.style.display='flex';
+}else if(saved.status==='declined'){
+if(icon)icon.textContent='💌';
+if(title)title.textContent='Your response was received';
+if(sub)sub.textContent='Dear '+gName+', thank you for letting '+(data.names||'the hosts')+' know. You\u2019ll be missed.';
+}else{
+if(icon)icon.textContent='✓';
+if(title)title.textContent='You\u2019ve already responded';
+if(sub)sub.textContent='Your response to this invitation has been received.';
+}
+confirmed.classList.add('show');
+}
+}
+}catch(e){}
 // ── Sealed envelope ──
 const seal=el('gvSeal');
 if(seal){
@@ -3768,11 +3841,74 @@ preview.innerHTML=`<div style="width:280px;height:380px;border-radius:18px;overf
 }
 }
 let gvSelectedRsvp=null;
+
+// ── Guest-side diagnostic: tap the monogram 5× within 3s ──
+async function runGuestDiagnostic(){
+const inviteId=(window._gvInviteData&&window._gvInviteData.id)||((window.location.hash||'').match(/^#invite\/([a-z0-9]+)/i)||[])[1]||null;
+const out=[];
+const add=(l,ok,d)=>out.push({l,ok,d:d||''});
+add('Invite ID',inviteId?true:false,inviteId||'not found in link');
+add('Browser','info',(navigator.userAgent||'').slice(0,70));
+add('Online','info',String(navigator.onLine));
+if(inviteId){
+try{
+const t0=Date.now();
+const {data:inv,error}=await _sb.from('invites').select('*').eq('id',inviteId).maybeSingle();
+if(error)add('Load invitation',false,(error.code||'')+' '+error.message);
+else if(!inv)add('Load invitation',false,'No record found in database');
+else{
+add('Load invitation',true,(Date.now()-t0)+'ms');
+add('Background photo',!!inv.bg_photo,inv.bg_photo?Math.round(inv.bg_photo.length/1024)+'KB':'not saved');
+let galN=0;try{galN=(JSON.parse(inv.photos||'[]')||[]).length;}catch(_){ }
+add('Gallery photos',galN>0?true:'info',galN+' saved');
+add('Music',!!inv.bg_music,inv.bg_music?Math.round(inv.bg_music.length/1024)+'KB':'none');
+add('Accent colour','info',inv.accent_color||'default');
+}
+}catch(e){add('Load invitation',false,e.message);}
+try{
+const probe={invite_id:inviteId,guest_name:'(connection test)',status:'accepted',message:'DIAG_DELETE_ME'};
+const {data:ins,error:insErr}=await _sb.from('rsvps').insert(probe).select();
+if(insErr)add('RSVP write test',false,(insErr.code||'')+' '+insErr.message);
+else{
+add('RSVP write test',true,'guests can respond ✓');
+if(ins&&ins[0]&&ins[0].id)await _sb.from('rsvps').delete().eq('id',ins[0].id).catch(()=>{});
+}
+}catch(e){add('RSVP write test',false,e.message);}
+}
+let panel=document.getElementById('gvDiagPanel');
+if(!panel){
+panel=document.createElement('div');
+panel.id='gvDiagPanel';
+panel.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(10,8,6,.93);display:flex;align-items:center;justify-content:center;padding:20px;';
+document.body.appendChild(panel);
+}
+panel.style.display='flex';
+panel.innerHTML='<div style="background:#15110c;border:1px solid rgba(200,160,80,.3);border-radius:16px;max-width:440px;width:100%;max-height:80vh;overflow-y:auto;padding:22px;font-family:Inter,sans-serif;">'
++'<div style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:19px;color:rgba(255,255,255,.92);margin-bottom:14px;">Invitation health check</div>'
++out.map(r=>'<div style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px;">'
++'<span>'+(r.ok===true?'✅':r.ok==='info'?'ℹ️':'❌')+'</span>'
++'<span style="font-weight:600;min-width:118px;color:rgba(255,255,255,.85);">'+r.l+'</span>'
++'<span style="color:rgba(255,255,255,.55);word-break:break-word;">'+String(r.d).replace(/</g,'&lt;')+'</span></div>').join('')
++'<button onclick="document.getElementById(\'gvDiagPanel\').style.display=\'none\'" style="margin-top:16px;padding:10px 18px;border-radius:10px;border:1px solid rgba(200,160,80,.5);background:transparent;color:rgba(255,255,255,.9);font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Close</button></div>';
+}
+(function(){
+let taps=0,timer=null;
+document.addEventListener('click',e=>{
+const m1=document.getElementById('gvMono');
+const m2=document.getElementById('gvSealMono');
+if(!(m1&&m1.contains(e.target))&&!(m2&&m2.contains(e.target)))return;
+taps++;clearTimeout(timer);
+timer=setTimeout(()=>{taps=0;},3000);
+if(taps>=5){taps=0;runGuestDiagnostic();}
+});
+})();
 function gvOpenSeal(){
 const seal=document.getElementById('gvSeal');
 if(seal)seal.classList.add('opened');
 }
 function gvSelectRsvp(status){
+try{
+
 gvSelectedRsvp=status;
 const acceptBtn=document.getElementById('gvAcceptBtn');
 const declineBtn=document.getElementById('gvDeclineBtn');
@@ -3785,6 +3921,11 @@ const name=document.getElementById('gvGuestName')?.value.trim();
 if(submitBtn)submitBtn.disabled=!name;
 if(submitBtn)submitBtn.textContent=status==='accepted'?'Confirm Attendance ✓':'Send Response';
 setTimeout(()=>form?.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+
+}catch(err){
+console.error('[Awatu] gvSelectRsvp:',err);
+try{showToast('Something went wrong — please tap again','error',3000);}catch(_){}
+}
 }
 async function submitGuestRsvp(){
 if(!gvSelectedRsvp){showToast('Please select Accept or Decline');return;}
@@ -3792,8 +3933,13 @@ const name=document.getElementById('gvGuestName')?.value.trim();
 if(!name){showToast('Please enter your name');return;}
 const email=document.getElementById('gvGuestEmail')?.value.trim()||null;
 const message=document.getElementById('gvMessage')?.value.trim()||null;
-const inviteData=window._gvInviteData;
-if(!inviteData){return;}
+let inviteData=window._gvInviteData;
+if(!inviteData){
+// Recover the invite id from the link itself so the response still goes through
+const hm=(window.location.hash||'').match(/^#invite\/([a-z0-9]+)/i);
+if(hm){inviteData={id:hm[1]};window._gvInviteData=inviteData;}
+else{showToast('Connection issue — please reopen your invitation link','error',5000);return;}
+}
 const rsvpKey='awatu_rsvp_'+inviteData.id;
 if(localStorage.getItem(rsvpKey)){
 showToast('You have already responded to this invitation','');
@@ -3838,6 +3984,7 @@ const {data:counts}=await _sb.from('rsvps')
 }
 } catch(e){ console.warn('RSVP count update:', e); }
 try{localStorage.setItem('awatu_rsvp_'+inviteData.id,'1');}catch(e){}
+localStorage.setItem(rsvpKey,JSON.stringify({status:gvSelectedRsvp,name:name,message:message||'',ts:Date.now()}));
 document.getElementById('gvRsvpSection').style.display='none';
 const confirmed=document.getElementById('gvConfirmed');
 const icon=document.getElementById('gvConfirmedIcon');
@@ -4695,18 +4842,25 @@ try{
 const {data:inv}=await _sb.from('invites').select('*').eq('id',inviteId).maybeSingle();
 if(inv){
 // Restore the client's photo from this device's cache if the DB row lost it
-if(!inv.bg_photo){
 try{
 const c=localStorage.getItem('awatu_pending_invite_'+inviteId);
 if(c){
 let j;try{j=JSON.parse(c);}catch(_){try{j=JSON.parse(decodeURIComponent(escape(atob(c))));}catch(__){j=null;}}
-if(j&&j.bg_photo&&String(j.bg_photo).startsWith('data:image')&&j.bg_photo.length<900000){
-inv.bg_photo=j.bg_photo;
-_sb.from('invites').update({bg_photo:j.bg_photo}).eq('id',inv.id).then(()=>console.log('[Awatu] Photo restored to DB ✓')).catch(()=>{});
+if(j){
+const patch={};
+if(!inv.bg_photo&&j.bg_photo&&String(j.bg_photo).startsWith('data:image')&&j.bg_photo.length<900000){inv.bg_photo=j.bg_photo;patch.bg_photo=j.bg_photo;}
+if(!inv.bg_music&&j.bg_music&&String(j.bg_music).startsWith('data:audio')&&j.bg_music.length<3600000){inv.bg_music=j.bg_music;patch.bg_music=j.bg_music;}
+if(!inv.photos&&j.photos){
+const arr=Array.isArray(j.photos)?j.photos.map(p=>p&&p.data||p):[];
+const gal=arr.filter(d=>String(d).startsWith('data:image')).slice(0,5);
+if(gal.length){const gj=JSON.stringify(gal);if(gj.length<1800000){inv.photos=gj;patch.photos=gj;}}
+}
+if(Object.keys(patch).length){
+_sb.from('invites').update(patch).eq('id',inv.id).then(()=>console.log('[Awatu] Media restored to DB ✓ ('+Object.keys(patch).join(', ')+')')).catch(()=>{});
+}
 }
 }
 }catch(e){}
-}
 currentInviteId=inv.id;currentInviteData=inv;
 openShareModal(inv.id,inv,encodeInviteForLink(inv));
 return;
