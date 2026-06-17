@@ -70,15 +70,11 @@
     <h1 class="hero-title"><span style="font-family:'Cormorant Garamond',serif;font-weight:300;letter-spacing:.04em;font-size:clamp(48px,6.5vw,96px);font-style:italic;">Invite with intention &amp; <span style="color:var(--pop-coral);">elegance</span></span></h1>
     <p class="hero-sub">Beautiful digital invitations for weddings, graduations,<br>corporate events and every moment worth celebrating.</p>
     <div class="hero-actions">
-      <button class="btn-primary-hero" onclick="goto('pricing')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        Available Packages
+      <button class="btn-primary-hero" onclick="goto('gallery')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle;margin-right:6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Create Invite
       </button>
-      <a href="https://wa.me/260977751804?text=Hi%20Awatu!%20I%27d%20like%20to%20find%20out%20more%20about%20your%20digital%20invitations." target="_blank" class="btn-wa-hero">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.847 0-3.574-.497-5.064-1.364l-.361-.214-3.762.896.944-3.659-.235-.374A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Chat on WhatsApp
-      </a>
-      <button class="btn-secondary-hero" onclick="goto('gallery')">Explore Designs</button>
+      <button class="btn-secondary-hero" onclick="goto('pricing')">Available Packages</button>
     </div>
     <div class="hero-search">
       <div class="hs-field">
@@ -1781,6 +1777,11 @@
     <div class="footer-bottom">
       <div>© 2026 Awatu · All rights reserved · Lusaka, Zambia</div>
       <div style="margin-top:6px;opacity:.7;">Part of the Edge Group of Companies</div>
+      <div style="margin-top:8px;font-size:12px;">
+        <a onclick="openPolicy('privacy')" style="cursor:pointer;text-decoration:underline;opacity:.75;">Privacy Policy</a>
+        <span style="opacity:.4;margin:0 8px;">·</span>
+        <a onclick="openPolicy('terms')" style="cursor:pointer;text-decoration:underline;opacity:.75;">Terms of Service</a>
+      </div>
     </div>
   </div>
 </footer>
@@ -1932,6 +1933,21 @@ const SAMPLE_RSVPS=[
 {guest:'Chanda Daka',event:"UNZA Graduation",status:'accepted',time:'1 hr ago'},
 ];
 const SUPABASE_URL = 'https://cgrulhgqburflnjnqyyt.supabase.co';
+function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function openPolicy(which){
+var P={
+privacy:{t:'Privacy Policy',b:'<p><strong>Last updated: June 2026</strong></p><p>Awatu, part of the Edge Group of Companies, is based in Lusaka, Zambia. This policy explains how we handle your information.</p><p><strong>What we collect.</strong> When you create an invitation we store the event details, any photos or media you upload, and your account email. When a guest responds to an invitation, we store the name, optional email, RSVP status and any message they choose to send.</p><p><strong>How we use it.</strong> Your information is used solely to create and deliver your invitations and to show you who has responded. We do not sell your data or share it with third parties for advertising.</p><p><strong>Storage and security.</strong> Data is stored on our secure database provider (Supabase). Access is restricted so that only the account that created an invitation can view its responses.</p><p><strong>Your choices.</strong> You may request deletion of your account and associated data at any time by contacting us.</p><p><strong>Contact.</strong> For privacy questions, reach us via the contact details on awatu.co.zm.</p>'},
+terms:{t:'Terms of Service',b:'<p><strong>Last updated: June 2026</strong></p><p>By using Awatu you agree to these terms.</p><p><strong>Service.</strong> Awatu provides digital invitation creation and RSVP collection. Packages and prices are shown on our pricing section and may change.</p><p><strong>Payment.</strong> Invitations are activated after payment is received and approved. Fees are non-refundable once an invitation is published, except where required by law.</p><p><strong>Acceptable use.</strong> You agree not to upload unlawful, infringing or harmful content, and not to attempt to gain unauthorised access to the platform or other users\' data.</p><p><strong>Content.</strong> You retain ownership of the photos and text you upload. You grant Awatu permission to store and display that content for the purpose of delivering your invitation.</p><p><strong>Liability.</strong> The service is provided on an as-is basis. Awatu is not liable for indirect losses arising from use of the service.</p><p><strong>Contact.</strong> Questions about these terms can be sent via awatu.co.zm.</p>'}
+};
+var p=P[which]||P.privacy;
+var ov=document.getElementById('policyOverlay');
+if(!ov){ov=document.createElement('div');ov.id='policyOverlay';ov.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(28,25,23,.55);display:flex;align-items:center;justify-content:center;padding:20px;';ov.onclick=function(e){if(e.target===ov)ov.style.display='none';};document.body.appendChild(ov);}
+ov.style.display='flex';
+ov.innerHTML='<div style="background:#F5F1EC;color:#2E2A27;max-width:560px;width:100%;max-height:82vh;overflow-y:auto;border-radius:16px;padding:28px 26px;font-family:Inter,sans-serif;line-height:1.55;font-size:13.5px;">'
++'<div style="font-family:\'Playfair Display\',serif;font-size:24px;font-weight:700;margin-bottom:14px;">'+escapeHtml(p.t)+'</div>'
++p.b
++'<button onclick="document.getElementById(\'policyOverlay\').style.display=\'none\'" style="margin-top:18px;padding:10px 20px;border:none;border-radius:22px;background:#2E2A27;color:#F5F1EC;font-family:Inter,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Close</button></div>';
+}
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNncnVsaGdxYnVyZmxuam5xeXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDI0MDgsImV4cCI6MjA5NTk3ODQwOH0.NuejOJXVON_p5UxKl7P5qCblWf8GSRl9XHotNwVrVrY';
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
@@ -4438,9 +4454,9 @@ const header=`<tr class="rsvp-group-row"><td colspan="4" style="padding:16px 12p
 const body=g.list.map(r=>{
 const time=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'-';
 return`<tr>
-<td style="padding-left:18px;">${r.guest_name||'Guest'}</td>
+<td style="padding-left:18px;">${escapeHtml(r.guest_name||'Guest')}</td>
 <td><span class="rsvp-status ${r.status==='accepted'?'rs-acc':'rs-dec'}">${r.status==='accepted'?'✓ Attending':'✗ Declined'}</span></td>
-<td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#78716c;font-style:italic;font-size:12px;" title="${(r.message||'').replace(/"/g,'&quot;')}">${r.message||'—'}</td>
+<td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#78716c;font-style:italic;font-size:12px;" title="${escapeHtml(r.message||'')}">${escapeHtml(r.message||'—')}</td>
 <td style="color:#78716c;">${time}</td>
 </tr>`;
 }).join('');
@@ -4733,11 +4749,11 @@ rb.innerHTML=realRsvps.length
 const eventName=inviteMap[r.invite_id]||'Event';
 const time=r.created_at?new Date(r.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
 return`<tr>
-<td>${r.guest_name||'Guest'}</td>
-<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${eventName}</td>
+<td>${escapeHtml(r.guest_name||'Guest')}</td>
+<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(eventName)}</td>
 <td><span class="rsvp-status ${r.status==='accepted'?'rs-acc':'rs-dec'}">${r.status==='accepted'?'✓ Attending':'✗ Declined'}</span></td>
 <td style="color:#78716c;">${time}</td>
-</tr>${r.message?`<tr><td></td><td colspan="3" style="font-size:11px;color:#78716c;font-style:italic;padding-top:0;padding-bottom:10px;">💬 "${r.message}"</td></tr>`:''}`;
+</tr>${r.message?`<tr><td></td><td colspan="3" style="font-size:11px;color:#78716c;font-style:italic;padding-top:0;padding-bottom:10px;">💬 "${escapeHtml(r.message)}"</td></tr>`:''}`;
 }).join('')
 : '<tr><td colspan="4" style="text-align:center;padding:32px;font-style:italic;color:#78716c;">No RSVPs yet — guests will appear here once they respond</td></tr>';
 } catch(e){
