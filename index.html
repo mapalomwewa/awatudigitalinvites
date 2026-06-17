@@ -3202,6 +3202,10 @@ if(window._awatuMissingCols&&window._awatuMissingCols.length&&currentUser&&curre
 showToast('⚠ Database is missing columns: '+[...new Set(window._awatuMissingCols)].join(', ')+' — run the schema SQL','error',8000);
 }
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
+// ── Tell the creator if they added music but it did not persist ──
+if(f.bgMusic&&String(f.bgMusic).startsWith('data:audio')&&!_invRow.bg_music&&!invErr){
+showToast('Your music wasn\u2019t saved — the file may be too large (keep it under ~2.5MB) or the music column is missing from the database. See the music fix.','error',8000);
+}
 
 // ── Save event to DB ──────────────────────────────────────────────────────────
 const _evBase={
