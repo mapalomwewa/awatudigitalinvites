@@ -44,6 +44,66 @@
 .awatu-seal-stage:active .seal{transform:scale(.97);}
 .gv-seal-eyebrow{margin-top:26px;}
 @media(prefers-reduced-motion:reduce){.awatu-seal-stage .seal{transition:none;}}
+/* ============ DASHBOARD MOTIF REDESIGN ============ */
+#dashOverlay{background:#d9d3ca;}
+#dashLayout{display:block;}
+#dashSidebar{display:none !important;}
+#dashMain{max-width:434px;margin:0 auto;padding:0 0 96px;background:#F5F1EC;min-height:100vh;width:100%;float:none;}
+.dpanel{padding:0 16px;}
+/* motif header */
+.dash-motif-header{position:relative;overflow:hidden;margin:0 -16px 18px;padding:42px 22px 26px;background:#4A2E1E;}
+.dash-motif-header .dmh-field{position:absolute;inset:0;width:100%;height:100%;opacity:.9;}
+.dash-motif-header .dmh-fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(74,46,30,.35) 0%,rgba(74,46,30,.75) 70%,#4A2E1E 100%);}
+.dash-motif-header .dmh-content{position:relative;z-index:2;}
+.dmh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.dmh-eyebrow{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600;}
+.dash-brand-chip{display:flex;align-items:center;gap:0;font-family:'Playfair Display',serif;font-weight:700;font-size:17px;}
+.dash-brand-chip .a{color:#F5F1EC;}
+.dash-brand-chip .w{color:#2BA3B8;}
+.dash-brand-chip .rest{color:#fff;}
+.dash-brand-chip .dot{width:5px;height:5px;border-radius:50%;background:#E8821E;align-self:flex-start;margin-top:3px;margin-left:2px;}
+.dmh-greet{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:#fff;line-height:1.15;margin-bottom:6px;}
+.dmh-greet .name,.dmh-greet b{color:#E0A93A;}
+.dmh-sub{font-size:13.5px;color:rgba(255,255,255,.78);line-height:1.5;}
+/* action cards */
+.dash-featured{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;}
+.dash-feat-card{position:relative;overflow:hidden;border-radius:20px;padding:20px;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer;transition:transform .25s,box-shadow .25s;}
+.dash-feat-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.14);}
+.dash-feat-card.create{background:linear-gradient(115deg,#E89A7A 0%,#E8821E 55%,#E0A93A 100%);}
+.dash-feat-card.insights{background:linear-gradient(115deg,#7B7FD4 0%,#2BA3B8 100%);}
+.dash-feat-card .dfc-eyebrow{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.92;font-weight:600;margin-bottom:8px;}
+.dash-feat-card .dfc-h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;margin-bottom:5px;}
+.dash-feat-card .dfc-p{font-size:13px;opacity:.92;}
+.dash-feat-card .dfc-ic{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+.dash-feat-card .dfc-motif{position:absolute;right:-10px;bottom:-14px;opacity:.25;}
+/* stat tiles */
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:24px;}
+.dash-stat{position:relative;background:#fff;border-radius:18px;padding:20px 16px 16px;overflow:hidden;border:1px solid #E8E0D6;}
+.dash-stat .dash-stat-bar{position:absolute;top:0;left:0;right:0;height:4px;width:auto;border-radius:0;margin:0;}
+.dash-stat-icon{font-size:22px;margin-bottom:10px;line-height:1;}
+.dash-stat-n{font-family:'Playfair Display',serif;font-size:34px;font-weight:600;line-height:1;}
+.dash-stat-l{font-size:12.5px;color:#7C736B;margin-top:6px;font-weight:500;}
+.dash-stat:has(.dsb-teal) .dash-stat-bar,.dash-stat:has(.dsb-teal) .dash-stat-n{color:#E8821E;background-color:#E8821E;}
+.dash-stat:has(.dsb-teal) .dash-stat-n{background:none;}
+.dash-stat:has(.dsb-amber) .dash-stat-bar{background:#E0A93A;}
+.dash-stat:has(.dsb-amber) .dash-stat-n{color:#E0A93A;}
+.dash-stat:has(.dsb-sage) .dash-stat-bar{background:#8FB36B;}
+.dash-stat:has(.dsb-sage) .dash-stat-n{color:#8FB36B;}
+.dash-stat:has(.dsb-rose) .dash-stat-bar{background:#E89A7A;}
+.dash-stat:has(.dsb-rose) .dash-stat-n{color:#E89A7A;}
+.dash-stat:has(.dsb-teal) .dash-stat-bar{background:#E8821E;}
+/* tabs */
+.dash-tabs{display:flex;gap:26px;border-bottom:1px solid #E8E0D6;margin-bottom:16px;}
+.dash-tab{background:none;border:none;font-size:15px;font-weight:600;color:#7C736B;padding:0 0 12px;position:relative;cursor:pointer;}
+.dash-tab.active{color:#2E2A27;}
+.dash-tab.active::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2.5px;background:#E8821E;border-radius:2px;}
+/* event cards */
+.dash-event-card{background:#fff;border:1px solid #E8E0D6;border-radius:16px;}
+/* bottom nav always visible, centered to column */
+#dashMobileNav{display:flex !important;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:434px;background:#fff;border-top:1px solid #E8E0D6;justify-content:space-around;padding:10px 8px 20px;z-index:650;}
+.dmn-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:#7C736B;font-weight:500;cursor:pointer;}
+.dmn-btn.active{color:#E8821E;}
+.dmn-btn svg{width:22px;height:22px;}
 </style>
 
 </head>
@@ -5488,23 +5548,48 @@ if(taps>=5){taps=0;if(typeof runAwatuDiagnostic==='function')runAwatuDiagnostic(
     <main id="dashMain">
 
       <div id="dashPanel-overview" class="dpanel active">
-        <div class="dash-topbar">
-          <div class="dash-greeting" id="dashGreeting">Good morning ✦</div>
-          <div class="dash-greeting-sub" id="dashGreetingSub">Here's what's happening with your invitations</div>
+        <div class="dash-motif-header">
+          <svg class="dmh-field" viewBox="0 0 390 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><g id="dhrow">
+              <polygon points="0,8 6,18 -6,18" fill="#E8821E"/>
+              <rect x="34" y="9" width="9" height="9" transform="rotate(45 38.5 13.5)" fill="#2BA3B8"/>
+              <circle cx="78" cy="13" r="5" fill="none" stroke="#8FB36B" stroke-width="1.6"/><circle cx="78" cy="13" r="1.8" fill="#8FB36B"/>
+              <path d="M104,8 l5,10 l5,-10 M114,8 l5,10 l5,-10" fill="none" stroke="#E89A7A" stroke-width="1.6"/>
+              <line x1="150" y1="13" x2="168" y2="13" stroke="#E0A93A" stroke-width="2"/>
+              <g stroke="#F5F1EC" stroke-width="1.5"><line x1="190" y1="9" x2="200" y2="9"/><line x1="190" y1="13" x2="200" y2="13"/><line x1="190" y1="17" x2="200" y2="17"/></g>
+              <path d="M222,18 l6,-10 l6,10" fill="none" stroke="#2BA3B8" stroke-width="1.6"/>
+              <circle cx="256" cy="9" r="1.5" fill="#E8821E"/><circle cx="262" cy="9" r="1.5" fill="#E8821E"/><circle cx="259" cy="14" r="1.5" fill="#E8821E"/><circle cx="256" cy="19" r="1.5" fill="#E8821E"/><circle cx="262" cy="19" r="1.5" fill="#E8821E"/>
+              <polygon points="290,8 296,18 284,18" fill="#8FB36B"/>
+              <rect x="320" y="9" width="9" height="9" transform="rotate(45 324.5 13.5)" fill="none" stroke="#E89A7A" stroke-width="1.5"/>
+              <line x1="352" y1="13" x2="372" y2="13" stroke="#2BA3B8" stroke-width="2"/>
+            </g></defs>
+            <g opacity="0.85"><use href="#dhrow" y="20"/><use href="#dhrow" y="62" transform="translate(-22 0)"/><use href="#dhrow" y="104" transform="translate(14 0)"/><use href="#dhrow" y="146"/><use href="#dhrow" y="188" transform="translate(-22 0)"/><use href="#dhrow" y="230" transform="translate(14 0)"/><use href="#dhrow" y="272"/></g>
+          </svg>
+          <div class="dmh-fade"></div>
+          <div class="dmh-content">
+            <div class="dmh-top">
+              <div class="dmh-eyebrow">Your celebrations</div>
+              <div class="dash-brand-chip"><span class="a">A</span><span class="w">w</span><span class="rest">atu</span><span class="dot"></span></div>
+            </div>
+            <div class="dmh-greet" id="dashGreeting">Good morning</div>
+            <div class="dmh-sub" id="dashGreetingSub">Track your invitations and guest responses</div>
+          </div>
         </div>
 
         <div class="dash-featured">
-          <div class="dash-feat-card dfc-rose" onclick="closeDash();setTimeout(()=>goto('gallery'),200)">
-            <div class="dash-feat-card-icon">✦</div>
-            <div class="dash-feat-card-label">Browse Designs</div>
-            <div class="dash-feat-card-name">Create a New Invitation</div>
-            <div class="dash-feat-card-meta">Head to Awatu to design &amp; send</div>
+          <div class="dash-feat-card create" onclick="closeDash();setTimeout(()=>goto('gallery'),200)">
+            <div class="dfc-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 5.2L19 9l-4 3.4L16.3 18 12 14.8 7.7 18 9 12.4 5 9l5.2-.8L12 3z" fill="#fff"/></svg></div>
+            <div class="dfc-eyebrow">Browse Designs</div>
+            <div class="dfc-h3">Create a New Invitation</div>
+            <div class="dfc-p">Design &amp; send in minutes</div>
+            <svg class="dfc-motif" width="90" height="70" viewBox="0 0 90 70" fill="none"><polygon points="20,50 28,66 12,66" fill="#fff"/><rect x="44" y="50" width="13" height="13" transform="rotate(45 50.5 56.5)" fill="#fff"/><circle cx="78" cy="58" r="7" fill="none" stroke="#fff" stroke-width="2"/></svg>
           </div>
-          <div class="dash-feat-card dfc-violet" onclick="switchDashPanel('analytics',document.getElementById('dnav-analytics'))">
-            <div class="dash-feat-card-icon">📊</div>
-            <div class="dash-feat-card-label">Insights</div>
-            <div class="dash-feat-card-name">View Analytics</div>
-            <div class="dash-feat-card-meta">Track your event performance</div>
+          <div class="dash-feat-card insights" onclick="switchDashPanel('analytics',document.getElementById('dnav-analytics'))">
+            <div class="dfc-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="4" y="12" width="3.5" height="8" rx="1" fill="#fff"/><rect x="10.2" y="7" width="3.5" height="13" rx="1" fill="#fff"/><rect x="16.5" y="4" width="3.5" height="16" rx="1" fill="#fff"/></svg></div>
+            <div class="dfc-eyebrow">Insights</div>
+            <div class="dfc-h3">View Analytics</div>
+            <div class="dfc-p">Track your event performance</div>
+            <svg class="dfc-motif" width="90" height="70" viewBox="0 0 90 70" fill="none"><path d="M20,40 l8,16 l8,-16 M36,40 l8,16 l8,-16" fill="none" stroke="#fff" stroke-width="2"/><line x1="64" y1="56" x2="82" y2="56" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
           </div>
         </div>
 
