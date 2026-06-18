@@ -128,6 +128,26 @@
 .theme-traditional .gv-names{font-family:'DM Serif Display',serif;font-style:normal;font-weight:400;letter-spacing:0;}
 .theme-traditional .gv-eyebrow{font-family:'Inter',sans-serif;font-weight:700;letter-spacing:.26em;}
 .theme-traditional .gv-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;}
+/* ── Per-family hero mood (distinct colour cast instead of identical near-black) ── */
+.theme-wedding .gv-hero-overlay{background:linear-gradient(to bottom,rgba(44,32,12,.22) 0%,rgba(32,23,9,.55) 52%,rgba(22,15,5,.9) 100%);}
+.theme-save .gv-hero-overlay{background:linear-gradient(to bottom,rgba(30,42,28,.18) 0%,rgba(24,36,22,.46) 55%,rgba(16,28,16,.82) 100%);}
+.theme-corporate .gv-hero-overlay{background:linear-gradient(to bottom,rgba(18,28,40,.3) 0%,rgba(13,21,33,.6) 50%,rgba(7,13,23,.92) 100%);}
+.theme-graduation .gv-hero-overlay{background:linear-gradient(to bottom,rgba(14,24,48,.3) 0%,rgba(9,17,40,.62) 50%,rgba(5,11,28,.93) 100%);}
+.theme-birthday .gv-hero-overlay{background:linear-gradient(to bottom,rgba(64,32,8,.16) 0%,rgba(52,27,8,.46) 55%,rgba(32,17,4,.82) 100%);}
+.theme-traditional .gv-hero-overlay{background:linear-gradient(to bottom,rgba(54,28,12,.24) 0%,rgba(42,22,10,.55) 50%,rgba(28,14,6,.9) 100%);}
+/* ── Desktop dashboard: proper wide layout instead of a phone-width strip ── */
+@media(min-width:820px){
+  #dashMain{max-width:1000px;padding:0 0 48px;}
+  .dpanel{padding:0 28px;}
+  .dash-motif-header{margin:0 -28px 24px;padding:48px 40px 32px;border-radius:0 0 22px 22px;}
+  .dmh-greet{font-size:34px;}
+  .dash-featured{flex-direction:row;}
+  .dash-feat-card{flex:1;padding:24px;}
+  .dash-stats{grid-template-columns:repeat(4,1fr);}
+  #dashMobileNav{left:50%;transform:translateX(-50%);width:auto;max-width:none;border:1px solid #E8E0D6;border-radius:50px;bottom:22px;padding:10px 26px;gap:30px;box-shadow:0 10px 30px rgba(46,42,39,.16);}
+  .dmn-btn{flex-direction:row;gap:8px;font-size:13px;}
+  .dmn-btn svg{width:18px;height:18px;}
+}
 </style>
 
 </head>
@@ -3897,7 +3917,7 @@ try{
 if(Array.isArray(data.photos))pics=data.photos;
 else if(typeof data.photos==='string'&&data.photos.trim().startsWith('['))pics=JSON.parse(data.photos);
 }catch(e){}
-pics=(pics||[]).filter(p=>String(p).startsWith('data:image')).slice(0,5);
+pics=(pics||[]).map(p=>typeof p==='string'?p:(p&&p.data)||'').filter(p=>p.startsWith('data:image')).slice(0,5);
 if(pics.length){
 let html='';let idx=0;let step=0;
 while(idx<pics.length){
@@ -5889,7 +5909,7 @@ if(taps>=5){taps=0;if(typeof runAwatuDiagnostic==='function')runAwatuDiagnostic(
         <div style="font-family:'Inter',sans-serif;font-size:11px;color:#78716c;margin-top:6px;">Found in the confirmation SMS sent by Airtel or MTN after your withdrawal</div>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:10px;">
-        <button onclick="previewAsGuest()" style="flex:1;padding:14px;border-radius:50px;background:#25D366;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;">Preview as Guest</button>
+        <button onclick="previewAsGuest()" style="flex:1;padding:14px;border-radius:50px;background:#25D366;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;">Preview</button>
         <button id="paySubmitBtn" onclick="submitPaymentRef()" disabled style="flex:1;padding:14px;border-radius:50px;background:#1c1917;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;">Submit Withdrawal Reference</button>
       </div>
       <button onclick="closePaymentModal()" style="width:100%;padding:11px;border-radius:50px;background:transparent;border:1.5px solid #e5e1dc;color:#78716c;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;">Cancel</button>
