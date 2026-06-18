@@ -104,6 +104,30 @@
 .dmn-btn{background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:#7C736B;font-weight:500;cursor:pointer;}
 .dmn-btn.active{color:#E8821E;}
 .dmn-btn svg{width:22px;height:22px;}
+/* ============ PER-DESIGN GUEST-VIEW THEMES ============ */
+/* Wedding — elegant romantic, gold */
+.theme-wedding .gv-names{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;}
+.theme-wedding .gv-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;}
+/* Save the Date / nature — flowing script, sage */
+.theme-save .gv-names{font-family:'Great Vibes',cursive;font-style:normal;font-weight:400;font-size:clamp(52px,9vw,86px);letter-spacing:0;line-height:1.1;}
+.theme-save .gv-eyebrow{font-family:'Montserrat',sans-serif;font-weight:500;letter-spacing:.34em;}
+.theme-save .gv-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;}
+/* Corporate — clean modern, slate */
+.theme-corporate .gv-names{font-family:'Montserrat',sans-serif;font-style:normal;font-weight:600;letter-spacing:.005em;font-size:clamp(34px,6vw,58px);}
+.theme-corporate .gv-eyebrow{font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:.3em;}
+.theme-corporate .gv-tagline{font-family:'Montserrat',sans-serif;font-style:normal;font-weight:300;}
+/* Graduation — engraved prestige, navy */
+.theme-graduation .gv-names{font-family:'Cinzel',serif;font-style:normal;font-weight:600;font-size:clamp(30px,5.4vw,50px);letter-spacing:.01em;}
+.theme-graduation .gv-eyebrow{font-family:'Inter',sans-serif;font-weight:700;letter-spacing:.32em;}
+.theme-graduation .gv-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;}
+/* Birthday — friendly geometric, orange */
+.theme-birthday .gv-names{font-family:'Josefin Sans',sans-serif;font-style:normal;font-weight:600;letter-spacing:.01em;}
+.theme-birthday .gv-eyebrow{font-family:'Josefin Sans',sans-serif;font-weight:400;letter-spacing:.22em;}
+.theme-birthday .gv-tagline{font-family:'Josefin Sans',sans-serif;font-style:normal;font-weight:300;}
+/* Traditional — warm high-contrast serif, terracotta */
+.theme-traditional .gv-names{font-family:'DM Serif Display',serif;font-style:normal;font-weight:400;letter-spacing:0;}
+.theme-traditional .gv-eyebrow{font-family:'Inter',sans-serif;font-weight:700;letter-spacing:.26em;}
+.theme-traditional .gv-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;}
 </style>
 
 </head>
@@ -3174,6 +3198,25 @@ slim[k]=v;
 });
 return btoa(unescape(encodeURIComponent(JSON.stringify(slim))));
 }
+function previewAsGuest(){
+try{
+const f=customFields;
+if(!f.names&&!activeDesignKey){showToast('Add some details first to preview');return;}
+const dateStr=f.date?new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
+const data={
+id:'preview',design_key:activeDesignKey||'',
+names:f.names||'',eyebrow:f.eyebrow||'',date_str:dateStr,
+venue:f.venue||'',tagline:f.tagline||'',location:f.location||'',
+map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
+bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
+accent_color:f.accentColor||null,deadline:f.deadline||null,
+start_time:f.startTime||null,end_time:f.endTime||null,
+photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null,_preview:true
+};
+const enc=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+openGuestView('preview-'+Date.now(),enc);
+}catch(e){console.warn('Preview failed',e);showToast('Could not open preview','error');}
+}
 async function submitPaymentRef(){
 const ref=document.getElementById('payRefInput')?.value.trim();
 if(!ref){showToast('Please enter your payment reference number');return;}
@@ -3758,11 +3801,36 @@ const toName=new URLSearchParams(window.location.search).get('to');
 if(toName&&toName.trim()&&toName.length<60){greet.textContent='Dear '+toName.trim()+',';greet.style.display='block';}
 }catch(e){}
 }
-// ── Accent palette follows the design (client's accent_color, gold as house default) ──
+// ── Per-design theme + accent palette (theme follows the design family) ──
 try{
 const gvRoot=document.getElementById('guestView');
 if(gvRoot){
-const ac=(data.accent_color&&/^#[0-9a-f]{6}$/i.test(data.accent_color))?data.accent_color:null;
+const fam=(data.design_key||'').charAt(0).toLowerCase();
+['theme-wedding','theme-corporate','theme-graduation','theme-birthday','theme-traditional','theme-save'].forEach(t=>gvRoot.classList.remove(t));
+const THEME={w:'theme-wedding',c:'theme-corporate',g:'theme-graduation',b:'theme-birthday',t:'theme-traditional',s:'theme-save'};
+if(THEME[fam])gvRoot.classList.add(THEME[fam]);
+// ── Per-design distinction within a family: vary headline font + divider ornament by design number ──
+try{
+const num=parseInt((data.design_key||'').replace(/\D/g,''))||1;
+const FAM_FONTS={
+w:["'Cormorant Garamond',serif","'Playfair Display',serif","'Bodoni Moda',serif","'DM Serif Display',serif","'Cinzel',serif","'Raleway',sans-serif"],
+s:["'Cormorant Garamond',serif","'Raleway',sans-serif","'Josefin Sans',sans-serif","'Montserrat',sans-serif","'Playfair Display',serif","'Bodoni Moda',serif"],
+c:["'Montserrat',sans-serif","'Raleway',sans-serif","'Josefin Sans',sans-serif","'Inter',sans-serif","'Cinzel',serif","'Bodoni Moda',serif"],
+g:["'Cinzel',serif","'Playfair Display',serif","'DM Serif Display',serif","'Bodoni Moda',serif","'Cormorant Garamond',serif","'IM Fell English',serif"],
+b:["'Josefin Sans',sans-serif","'Montserrat',sans-serif","'Raleway',sans-serif","'DM Serif Display',serif","'Playfair Display',serif","'Bodoni Moda',serif"],
+t:["'DM Serif Display',serif","'IM Fell English',serif","'Playfair Display',serif","'Bodoni Moda',serif","'Cormorant Garamond',serif","'Cinzel',serif"]
+};
+const namesEl=document.querySelector('#guestView .gv-names');
+if(namesEl){
+if(num>1&&FAM_FONTS[fam]){const pool=FAM_FONTS[fam];namesEl.style.fontFamily=pool[(num-1)%pool.length];namesEl.style.fontStyle='normal';}
+else{namesEl.style.fontFamily='';namesEl.style.fontStyle='';}
+}
+const ORN=['✦','❖','✶','◆','❅','✤','⟡','✧','❀','✣'];
+const dv=document.querySelector('#guestView .gv-divider i');
+if(dv)dv.textContent=ORN[(num-1)%ORN.length];
+}catch(e){}
+const FAM_ACCENT={w:'#C8A96D',c:'#3E5C76',g:'#1F3A5F',b:'#E8821E',t:'#C2602F',s:'#7E9B6B'};
+const ac=(data.accent_color&&/^#[0-9a-f]{6}$/i.test(data.accent_color))?data.accent_color:(FAM_ACCENT[fam]||null);
 if(ac){
 const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
 gvRoot.style.setProperty('--gva',ac);
@@ -5820,7 +5888,10 @@ if(taps>=5){taps=0;if(typeof runAwatuDiagnostic==='function')runAwatuDiagnostic(
         <input id="payRefInput" type="text" placeholder="e.g. TXN12345678 or AB123456789" style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid #e5e1dc;background:#faf9f7;font-family:'Inter',sans-serif;font-size:14px;color:#1c1917;box-sizing:border-box;outline:none;" oninput="document.getElementById('paySubmitBtn').disabled=!this.value.trim()">
         <div style="font-family:'Inter',sans-serif;font-size:11px;color:#78716c;margin-top:6px;">Found in the confirmation SMS sent by Airtel or MTN after your withdrawal</div>
       </div>
-      <button id="paySubmitBtn" onclick="submitPaymentRef()" disabled style="width:100%;padding:14px;border-radius:50px;background:#1c1917;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;margin-bottom:10px;">Submit Withdrawal Reference</button>
+      <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <button onclick="previewAsGuest()" style="flex:1;padding:14px;border-radius:50px;background:#25D366;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;">Preview as Guest</button>
+        <button id="paySubmitBtn" onclick="submitPaymentRef()" disabled style="flex:1;padding:14px;border-radius:50px;background:#1c1917;color:#fff;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;">Submit Withdrawal Reference</button>
+      </div>
       <button onclick="closePaymentModal()" style="width:100%;padding:11px;border-radius:50px;background:transparent;border:1.5px solid #e5e1dc;color:#78716c;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;">Cancel</button>
     </div>
   </div>
