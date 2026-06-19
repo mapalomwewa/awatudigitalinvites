@@ -148,6 +148,52 @@
   .dmn-btn{flex-direction:row;gap:8px;font-size:13px;}
   .dmn-btn svg{width:18px;height:18px;}
 }
+/* ── Customizer: Layout & Style segmented controls ── */
+.lay-row-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--smoke,#9b8e80);margin:14px 0 7px;}
+.lay-seg{display:flex;flex-wrap:wrap;gap:7px;}
+.lay-opt{flex:1 1 auto;min-width:72px;padding:9px 10px;border-radius:10px;border:1.5px solid #e5e1dc;background:#fff;color:#6b6258;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .18s;}
+.lay-opt:hover{border-color:#c8a96d;}
+.lay-opt.active{background:#2E2A27;border-color:#2E2A27;color:#fff;}
+/* ── Guest view: client-chosen info position ── */
+.pos-bl .gv-hero{justify-content:flex-end;align-items:flex-start;}
+.pos-bl .gv-hero-content{text-align:left;align-items:flex-start;margin:0;max-width:580px;padding:60px 32px 96px;}
+.pos-bl .gv-divider{margin-left:0;margin-right:auto;}
+.pos-br .gv-hero{justify-content:flex-end;align-items:flex-end;}
+.pos-br .gv-hero-content{text-align:right;align-items:flex-end;margin:0;max-width:580px;padding:60px 32px 96px;}
+.pos-br .gv-divider{margin-right:0;margin-left:auto;}
+.pos-bc .gv-hero{justify-content:flex-end;}
+.pos-bc .gv-hero-content{padding-bottom:96px;}
+/* ── Guest view: background treatment (overrides family default) ── */
+.ovl-soft .gv-hero-overlay{background:linear-gradient(to bottom,rgba(0,0,0,.05) 0%,rgba(0,0,0,.22) 50%,rgba(0,0,0,.6) 100%)!important;}
+.ovl-fade .gv-hero-overlay{background:linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(0,0,0,0) 42%,rgba(0,0,0,.5) 72%,rgba(0,0,0,.86) 100%)!important;}
+.ovl-min .gv-hero-overlay{background:radial-gradient(ellipse at 50% 72%,rgba(0,0,0,.5) 0%,rgba(0,0,0,.16) 55%,rgba(0,0,0,0) 80%)!important;}
+.ovl-min .gv-names,.ovl-min .gv-tagline,.ovl-min .gv-eyebrow,.ovl-fade .gv-names{text-shadow:0 2px 22px rgba(0,0,0,.75),0 1px 4px rgba(0,0,0,.65);}
+/* ── Guest view: gallery layout ── */
+.gal-grid #gvGalleryGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.gal-grid #gvGalleryGrid .gv-story-pair{display:contents;}
+.gal-grid #gvGalleryGrid figure{margin:0;}
+.gal-grid #gvGalleryGrid figure img{width:100%;height:240px;object-fit:cover;border-radius:10px;display:block;}
+.gal-stack #gvGalleryGrid{display:flex;flex-direction:column;gap:16px;}
+.gal-stack #gvGalleryGrid .gv-story-pair{display:flex;flex-direction:column;gap:16px;}
+.gal-stack #gvGalleryGrid figure{margin:0;}
+.gal-stack #gvGalleryGrid figure img{width:100%;height:auto;border-radius:10px;display:block;}
+/* ── Customizer live preview = the real invitation, scaled into the card ── */
+.cust-card{height:440px!important;min-height:0!important;}
+.gv-prev{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;border-radius:inherit;background-size:cover;background-position:center;-webkit-overflow-scrolling:touch;}
+.gv-prev .gv-hero{min-height:100%;height:auto;}
+.gv-prev .gv-hero-content{padding:28px 18px 34px;max-width:none;}
+.gv-prev .gv-eyebrow{font-size:7px;margin-bottom:6px;}
+.gv-prev .gv-names{font-size:24px!important;line-height:1.08;margin-bottom:6px;}
+.gv-prev .gv-divider{margin:3px auto 12px;gap:8px;}
+.gv-prev .gv-tagline{font-size:9px;margin-bottom:12px;}
+.gv-prev .gv-details{font-size:8.5px;gap:3px;line-height:1.5;}
+.gv-prev .gvp-det{color:rgba(255,255,255,.9);}
+.gvp-gallery{padding:12px;display:flex;flex-direction:column;gap:7px;background:#0d0a07;}
+.gvp-gallery img{width:100%;display:block;object-fit:cover;border-radius:5px;}
+.gal-grid .gvp-gallery{display:grid;grid-template-columns:1fr 1fr;}
+.gal-grid .gvp-gallery img{height:62px;}
+.gal-stack .gvp-gallery img{height:auto;}
+.gal-editorial .gvp-gallery img:nth-child(3n+1){min-height:84px;}
 </style>
 
 </head>
@@ -2585,6 +2631,29 @@ Font colors
 </div>
 <div class="cust-extracted-label" id="extractedLabel" style="display:none;">✦ Colors extracted from your photo</div>
 </div>
+<div class="cust-field">
+<label class="cust-label">Layout &amp; Style <span style="font-weight:300;color:var(--smoke);">(customise the look)</span></label>
+<div class="lay-row-label">Info position (first page)</div>
+<div class="lay-seg">
+<button type="button" class="lay-opt active" onclick="custSetLayout('pos','center',this)">Center</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('pos','bl',this)">Bottom Left</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('pos','br',this)">Bottom Right</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('pos','bc',this)">Bottom</button>
+</div>
+<div class="lay-row-label">Background treatment</div>
+<div class="lay-seg">
+<button type="button" class="lay-opt active" onclick="custSetLayout('bg','dark',this)">Dark</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('bg','soft',this)">Soft</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('bg','fade',this)">Bottom Fade</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('bg','min',this)">Minimal</button>
+</div>
+<div class="lay-row-label">Gallery layout (multiple photos)</div>
+<div class="lay-seg">
+<button type="button" class="lay-opt active" onclick="custSetLayout('gal','editorial',this)">Editorial</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('gal','grid',this)">Grid</button>
+<button type="button" class="lay-opt" onclick="custSetLayout('gal','stack',this)">Stacked</button>
+</div>
+</div>
 <div class="cust-actions">
 <button class="cust-send-invite-btn" onclick="sendInvite()">
 <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -2599,57 +2668,58 @@ Customise your design above, then send the link directly to your guests.
 </div>`;
 }
 function buildPreviewInner(){
-const inv=invites[activeDesignKey];
 const f=customFields;
+const key=activeDesignKey||'w1';
+const inv=invites[key];
 if(!inv)return '';
-let body=inv.body;
-if(f.fontColor){
-body=body.replace(/(<div class="inv-big"[^>]*style="[^"]*color:)[^;"]*(;?[^"]*")/g,
-(m,pre,post)=>pre+f.fontColor+post);
-body=body.replace(/(font-family:'(?:Great Vibes|Sacramento|Cinzel|Bodoni Moda|Cormorant Garamond|IM Fell English|DM Serif Display|Montserrat|Raleway)[^;]*;[^;]*color:)[^;]*(;)/g,
-(m,pre,post)=>pre+f.fontColor+post);
-}
-if(f.accentColor){
-body=body.replace(/(<div class="inv-eye"[^>]*style="[^"]*color:)[^;"]*(;?[^"]*")/g,
-(m,pre,post)=>pre+f.accentColor+post);
-body=body.replace(/(<div class="inv-tag"[^>]*style="[^"]*color:)[^;"]*(;?[^"]*")/g,
-(m,pre,post)=>pre+f.accentColor+post);
-}
-const namesHtml=(f.names||'Your Names').replace(/&/g,'&amp;');
-body=body.replace(/(<div class="inv-big"[^>]*>)[^<]*((<br[^>]*>)[^<]*)*(<\/div>)/,`$1${namesHtml}$4`);
-if(f.eyebrow){
-const eh=f.eyebrow.replace(/&/g,'&amp;');
-body=body.replace(/(<div class="inv-eye"[^>]*>)[^<]*(<\/div>)/,`$1${eh}$2`);
-}
-if(f.date){
-const ds=new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-body=body.replace(/(<div class="inv-when"[^>]*>)[^<]*(<\/div>)/,`$1${ds}$2`);
-}
-if(f.venue){
-const v=f.venue.replace(/&/g,'&amp;');
-body=body.replace(/(<div class="inv-where"[^>]*>)[^<]*(<\/div>)/,`$1${v}$2`);
-}
-if(f.tagline){
-const tq='"'+f.tagline.replace(/&/g,'&amp;')+'"';
-if(body.includes('class="inv-tag"'))
-body=body.replace(/(<div class="inv-tag"[^>]*>)[^<]*(<\/div>)/,`$1${tq}$2`);
-else
-body=body.replace(/<\/div><\/div>$/,`<div class="inv-tag" style="font-style:italic;font-size:12px;margin-top:5px;${f.accentColor?'color:'+f.accentColor+';':''}">${tq}</div></div></div>`);
-}
-if(f.bgPhoto){
-const op=f.bgOpacity||0.65;
-body=body.replace(/(position:absolute;inset:0;background:[^;]+;opacity:)[^;]*(;)/,`$1${op}$2`);
-}
-if(f.location){
-const loc=`<div style="font-size:9px;display:flex;align-items:center;justify-content:center;gap:3px;margin-top:3px;opacity:.75;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${f.location.replace(/&/g,'&amp;')}</div>`;
-body=body.replace(/<\/div><\/div>$/,loc+'</div></div>');
-}
-if(f.photos&&f.photos.length&&!f.bgPhoto){
-const sz=f.photos.length===1?'72px':'48px';
-const imgs=f.photos.map(p=>`<img loading="lazy" src="${p.data}" style="width:${sz};height:${sz};object-fit:cover;border-radius:6px;border:1.5px solid rgba(255,255,255,.3);">`).join('');
-body=body.replace(/<\/div><\/div>$/,`<div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);">${imgs}</div></div></div>`);
-}
-return body;
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fam=key.charAt(0).toLowerCase();
+const num=parseInt(key.replace(/\D/g,''))||1;
+const FAM_ACCENT={w:'#C8A96D',c:'#3E5C76',g:'#1F3A5F',b:'#E8821E',t:'#C2602F',s:'#7E9B6B'};
+const accent=(f.accentColor&&/^#[0-9a-f]{6}$/i.test(f.accentColor))?f.accentColor:(FAM_ACCENT[fam]||'#C8A96D');
+const rgb=[parseInt(accent.slice(1,3),16),parseInt(accent.slice(3,5),16),parseInt(accent.slice(5,7),16)].join(',');
+const THEME={w:'theme-wedding',c:'theme-corporate',g:'theme-graduation',b:'theme-birthday',t:'theme-traditional',s:'theme-save'}[fam]||'';
+const FAM_FONTS={
+w:["'Cormorant Garamond',serif","'Playfair Display',serif","'Bodoni Moda',serif","'DM Serif Display',serif","'Cinzel',serif","'Raleway',sans-serif"],
+s:["'Cormorant Garamond',serif","'Raleway',sans-serif","'Josefin Sans',sans-serif","'Montserrat',sans-serif","'Playfair Display',serif","'Bodoni Moda',serif"],
+c:["'Montserrat',sans-serif","'Raleway',sans-serif","'Josefin Sans',sans-serif","'Inter',sans-serif","'Cinzel',serif","'Bodoni Moda',serif"],
+g:["'Cinzel',serif","'Playfair Display',serif","'DM Serif Display',serif","'Bodoni Moda',serif","'Cormorant Garamond',serif","'IM Fell English',serif"],
+b:["'Josefin Sans',sans-serif","'Montserrat',sans-serif","'Raleway',sans-serif","'DM Serif Display',serif","'Playfair Display',serif","'Bodoni Moda',serif"],
+t:["'DM Serif Display',serif","'IM Fell English',serif","'Playfair Display',serif","'Bodoni Moda',serif","'Cormorant Garamond',serif","'Cinzel',serif"]
+};
+const fOver=(num>1&&FAM_FONTS[fam])?FAM_FONTS[fam][(num-1)%FAM_FONTS[fam].length]:'';
+const ORN=['\u2726','\u2756','\u2736','\u25C6','\u2745','\u2724','\u27E1','\u2727','\u2740','\u2723'];
+const orn=ORN[(num-1)%ORN.length];
+const pos='pos-'+(f.heroPos||'center');
+const ovl='ovl-'+(f.overlayStyle||'dark');
+const gal='gal-'+(f.galLayout||'editorial');
+const names=esc(f.names||'Your Names');
+const eyebrow=esc(f.eyebrow||"You're Invited");
+const tagline=f.tagline?esc(f.tagline):'';
+let dateStr='';
+if(f.date){try{dateStr=new Date(f.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}catch(e){}}
+const venue=f.venue?esc(f.venue):'';
+const loc=f.location?esc(f.location):'';
+const nameStyle=(fOver?'font-family:'+fOver+';font-style:normal;':'')+(f.fontColor?'color:'+f.fontColor+';':'');
+const photos=(f.photos||[]).map(p=>p&&p.data).filter(Boolean);
+let gallery='';
+if(photos.length){gallery='<div class="gvp-gallery">'+photos.map(src=>'<img src="'+src+'" alt="">').join('')+'</div>';}
+const bg=f.bgPhoto?("background:url('"+f.bgPhoto+"') center/cover;"):'';
+return '<div class="gv-prev '+THEME+' '+pos+' '+ovl+' '+gal+'" style="--gva:'+accent+';--gva-rgb:'+rgb+';'+bg+'">'
++'<div class="gv-hero"><div class="gv-hero-overlay"></div>'
++'<div class="gv-hero-content">'
++'<div class="gv-eyebrow">'+eyebrow+'</div>'
++'<h1 class="gv-names"'+(nameStyle?(' style="'+nameStyle+'"'):'')+'>'+names+'</h1>'
++'<div class="gv-divider" aria-hidden="true"><span></span><i>'+orn+'</i><span></span></div>'
++(tagline?('<div class="gv-tagline">'+tagline+'</div>'):'')
++'<div class="gv-details">'
++(dateStr?('<div class="gvp-det">'+dateStr+'</div>'):'')
++(venue?('<div class="gvp-det">'+venue+'</div>'):'')
++(loc?('<div class="gvp-det">'+loc+'</div>'):'')
++'</div>'
++'</div></div>'
++gallery
++'</div>';
 }
 function liveUpdate(key,val){
 customFields[key]=val;
@@ -3218,6 +3288,12 @@ slim[k]=v;
 });
 return btoa(unescape(encodeURIComponent(JSON.stringify(slim))));
 }
+function custSetLayout(group,val,btn){
+const map={pos:'heroPos',bg:'overlayStyle',gal:'galLayout'};
+if(map[group])customFields[map[group]]=val;
+if(btn&&btn.parentNode){btn.parentNode.querySelectorAll('.lay-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+const card=$('custCard');if(card)card.innerHTML=buildPreviewInner();
+}
 function previewAsGuest(){
 try{
 const f=customFields;
@@ -3231,6 +3307,7 @@ map_url:f.mapUrl||'',bg_photo:f.bgPhoto||null,
 bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
 accent_color:f.accentColor||null,deadline:f.deadline||null,
 start_time:f.startTime||null,end_time:f.endTime||null,
+hero_pos:f.heroPos||'center',overlay_style:f.overlayStyle||'dark',gallery_layout:f.galLayout||'editorial',
 photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null,_preview:true
 };
 const enc=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
@@ -3283,7 +3360,7 @@ bg_opacity:f.bgOpacity||0.65,font_color:f.fontColor||null,
 accent_color:f.accentColor||null,deadline:f.deadline||null,
 start_time:f.startTime||null,end_time:f.endTime||null,
 pkg,invite_body:buildInviteHTML(),
-photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null
+photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null,hero_pos:f.heroPos||'center',overlay_style:f.overlayStyle||'dark',gallery_layout:f.galLayout||'editorial'
 }));
 }catch(e){}
 
@@ -3303,7 +3380,8 @@ font_color:f.fontColor||null,
 accent_color:f.accentColor||null,
 deadline:f.deadline||null,
 start_time:f.startTime||null,
-end_time:f.endTime||null
+end_time:f.endTime||null,
+hero_pos:f.heroPos||'center',overlay_style:f.overlayStyle||'dark',gallery_layout:f.galLayout||'editorial'
 };
 if(f.bgPhoto&&String(f.bgPhoto).startsWith('data:image')&&f.bgPhoto.length<900000)_invRow.bg_photo=f.bgPhoto;
 if(f.bgMusic&&String(f.bgMusic).startsWith('data:audio')&&f.bgMusic.length<3600000)_invRow.bg_music=f.bgMusic;
@@ -3848,6 +3926,14 @@ else{namesEl.style.fontFamily='';namesEl.style.fontStyle='';}
 const ORN=['✦','❖','✶','◆','❅','✤','⟡','✧','❀','✣'];
 const dv=document.querySelector('#guestView .gv-divider i');
 if(dv)dv.textContent=ORN[(num-1)%ORN.length];
+// client-chosen layout: info position, background treatment, gallery layout
+const POS={center:'pos-center',bl:'pos-bl',br:'pos-br',bc:'pos-bc'};
+const OVL={dark:'ovl-dark',soft:'ovl-soft',fade:'ovl-fade',min:'ovl-min'};
+const GAL={editorial:'gal-editorial',grid:'gal-grid',stack:'gal-stack'};
+['pos-center','pos-bl','pos-br','pos-bc','ovl-dark','ovl-soft','ovl-fade','ovl-min','gal-editorial','gal-grid','gal-stack'].forEach(x=>gvRoot.classList.remove(x));
+gvRoot.classList.add(POS[data.hero_pos]||'pos-center');
+gvRoot.classList.add(OVL[data.overlay_style]||'ovl-dark');
+gvRoot.classList.add(GAL[data.gallery_layout]||'gal-editorial');
 }catch(e){}
 const FAM_ACCENT={w:'#C8A96D',c:'#3E5C76',g:'#1F3A5F',b:'#E8821E',t:'#C2602F',s:'#7E9B6B'};
 const ac=(data.accent_color&&/^#[0-9a-f]{6}$/i.test(data.accent_color))?data.accent_color:(FAM_ACCENT[fam]||null);
