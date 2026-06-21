@@ -3218,6 +3218,9 @@ if(!_profOk)showToast('Profile sync issue — see connection test','error',4000)
 const _invRow={
 id:inviteId,user_id:currentUser.id,
 design_key:activeDesignKey||'',
+tpl:(invites[activeDesignKey]&&invites[activeDesignKey].tpl)||customFields.tpl||null,
+partner_a:customFields.partner_a||null,partner_b:customFields.partner_b||null,
+story:customFields.story?JSON.stringify(customFields.story):null,
 names:f.names||'',eyebrow:f.eyebrow||'',
 date_str:dateStr,venue:f.venue||'',
 tagline:f.tagline||'',location:f.location||'',
@@ -3810,6 +3813,7 @@ async function wtGuestRsvp(data,res){try{
 }catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
+(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621 "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
 try{var _dk=(data.design_key||'').trim();var _tpl=data.tpl||(DESIGNS&&DESIGNS[_dk]&&DESIGNS[_dk].tpl)||null;if(_tpl){if(window.WTPL&&typeof wtMountGuest==='function'){return wtMountGuest(data,_tpl);}console.error('[Awatu] BUILD OUT OF DATE: invite uses wedding template "'+_tpl+'" but the WTPL engine is not on this page. Redeploy the latest build.');}else{console.warn('[Awatu] classic view: no template for design_key="'+_dk+'" tpl=',data.tpl);}}catch(_e){console.error('[Awatu] template dispatch error:',_e);}
 const heroBg=document.getElementById('gvHeroBg');
