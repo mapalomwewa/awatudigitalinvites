@@ -3801,7 +3801,7 @@ function wtMountGuest(data,tpl){var gv=document.getElementById('guestView');var 
  if(!host){host=document.createElement('div');host.id='wtplHost';if(gv)gv.appendChild(host);}
  var _aw=document.getElementById('gvSeal');if(_aw)_aw.style.display='none';
  host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:1000000;display:block;background:#0a0806';window._wtMounted=true;['gvWrap','gvSeal','gvLoading'].forEach(function(_id){var _e=document.getElementById(_id);if(_e)_e.style.display='none';});
- var r=WTPL.render(tpl,data);host.innerHTML=r.html;window._gvInviteData=data;
+ var r;try{r=WTPL.render(tpl,data);}catch(_re){console.error("[Awatu] render failed:",_re);host.innerHTML="<div style=\"min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;color:#bbb;font-family:Inter,sans-serif\"><div><div style=\"font-size:30px;font-style:italic;margin-bottom:12px;opacity:.7\">Awatu.</div><div style=\"font-size:14px;line-height:1.6;max-width:280px\">This invitation could not be displayed. Please refresh the page.</div></div></div>";window._wtMounted=true;return;}host.innerHTML=r.html;window._gvInviteData=data;
  WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{window.open(wtCalUrl(data),'_blank','noopener');}catch(e){}},onMap:function(){try{window.open(wtMapUrl(data),'_blank','noopener');}catch(e){}}});
  window._wtMusicStarted=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);},{once:true});});}
  var loading=document.getElementById('gvLoading');if(loading)loading.style.display='none';}
@@ -3817,7 +3817,7 @@ async function wtGuestRsvp(data,res){try{
 }catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
-(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
+(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL2 "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
 // The client's chosen template is the ONLY guest view. The old single-design renderer below is retired and never runs.
 var _dk=(data.design_key||'').trim();
@@ -6244,7 +6244,7 @@ function norm(d){
            {when:'Growing together',title:'The adventure',text:'Cities and slow mornings, the kind of love that deepens with every shared horizon.'},
            {when:'Forever',title:'The proposal',text:'Under a sky full of stars, a question was asked, and a lifetime quietly said yes.'}];
   }
-  let photos=(d.photos||[]).map(p=>typeof p==='string'?p:(p&&p.data)||'').filter(x=>x&&x.indexOf('data:image')===0||/^https?:/.test(x));
+  let photos=d.photos;if(typeof photos==='string'){try{photos=JSON.parse(photos);}catch(e){photos=[];}}if(!Array.isArray(photos))photos=[];photos=photos.map(p=>typeof p==='string'?p:(p&&p.data)||'').filter(x=>x&&(x.indexOf('data:image')===0||/^https?:/.test(x)));
   return {
     tpl:d.tpl||'bright-luxury',
     names:names, a:a, b:b,
