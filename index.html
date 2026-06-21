@@ -3811,7 +3811,7 @@ async function wtGuestRsvp(data,res){try{
 
 function populateGuestView(data){
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
-try{var _tpl=(DESIGNS&&DESIGNS[data.design_key]&&DESIGNS[data.design_key].tpl)||data.tpl;if(_tpl&&window.WTPL){return wtMountGuest(data,_tpl);}console.warn('[Awatu] classic guest view used. tpl=',_tpl,'design_key=',data.design_key,'WTPL loaded=',!!window.WTPL);}catch(_e){console.error('[Awatu] wedding template failed, fell back to classic view:',_e);}
+try{var _dk=(data.design_key||'').trim();var _tpl=data.tpl||(DESIGNS&&DESIGNS[_dk]&&DESIGNS[_dk].tpl)||null;if(_tpl){if(window.WTPL&&typeof wtMountGuest==='function'){return wtMountGuest(data,_tpl);}console.error('[Awatu] BUILD OUT OF DATE: invite uses wedding template "'+_tpl+'" but the WTPL engine is not on this page. Redeploy the latest build.');}else{console.warn('[Awatu] classic view: no template for design_key="'+_dk+'" tpl=',data.tpl);}}catch(_e){console.error('[Awatu] template dispatch error:',_e);}
 const heroBg=document.getElementById('gvHeroBg');
 if(heroBg){
 if(data.bg_photo){
@@ -6481,5 +6481,6 @@ window.WTPL={
 })();
 
 </script>
+<script>console.log("%c[Awatu] build 2026-06-21 - guest engine "+(window.WTPL?"LOADED":"MISSING (redeploy latest build)"),"font-weight:bold;color:"+(window.WTPL?"#5a7":"#c33"));</script>
 </body>
 </html>
