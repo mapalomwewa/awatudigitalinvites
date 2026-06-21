@@ -3811,7 +3811,7 @@ async function wtGuestRsvp(data,res){try{
 
 function populateGuestView(data){
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
-try{var _tpl=(DESIGNS&&DESIGNS[data.design_key]&&DESIGNS[data.design_key].tpl)||data.tpl;if(_tpl&&window.WTPL){return wtMountGuest(data,_tpl);}}catch(_e){}
+try{var _tpl=(DESIGNS&&DESIGNS[data.design_key]&&DESIGNS[data.design_key].tpl)||data.tpl;if(_tpl&&window.WTPL){return wtMountGuest(data,_tpl);}console.warn('[Awatu] classic guest view used. tpl=',_tpl,'design_key=',data.design_key,'WTPL loaded=',!!window.WTPL);}catch(_e){console.error('[Awatu] wedding template failed, fell back to classic view:',_e);}
 const heroBg=document.getElementById('gvHeroBg');
 if(heroBg){
 if(data.bg_photo){
