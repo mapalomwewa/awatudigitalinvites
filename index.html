@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Awatu · Beautiful Digital Invitations</title>
@@ -3678,9 +3681,10 @@ if(!data){
 if(loading)loading.innerHTML='<div style="text-align:center;padding:40px;"><div class="gv-loading-logo" style="opacity:.6;margin-bottom:16px;">Awatu.</div><div style="font-family:Inter,sans-serif;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;">Invitation not found or link has expired.</div><button onclick="closeGuestView()" style="padding:10px 24px;border-radius:22px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-size:13px;cursor:pointer;">Go back</button></div>';
 return;
 }
+window._wtMounted=false;
 populateGuestView(data);
-if(loading)loading.style.display='none';
-if(wrap)wrap.style.display='flex';
+if(wrap)wrap.style.display='none';
+if(window._wtMounted){if(loading)loading.style.display='none';}
 if(data.bg_music){
 try{
 const existing=document.getElementById('gvBgAudio');
@@ -3796,7 +3800,7 @@ function wtPlayMusic(src,host){if(window._wtMusicStarted||!src)return;window._wt
 function wtMountGuest(data,tpl){var gv=document.getElementById('guestView');var host=document.getElementById('wtplHost');
  if(!host){host=document.createElement('div');host.id='wtplHost';if(gv)gv.appendChild(host);}
  var _aw=document.getElementById('gvSeal');if(_aw)_aw.style.display='none';
- host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:100;display:block';
+ host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:1000000;display:block;background:#0a0806';window._wtMounted=true;['gvWrap','gvSeal','gvLoading'].forEach(function(_id){var _e=document.getElementById(_id);if(_e)_e.style.display='none';});
  var r=WTPL.render(tpl,data);host.innerHTML=r.html;window._gvInviteData=data;
  WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{window.open(wtCalUrl(data),'_blank','noopener');}catch(e){}},onMap:function(){try{window.open(wtMapUrl(data),'_blank','noopener');}catch(e){}}});
  window._wtMusicStarted=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);},{once:true});});}
@@ -3813,7 +3817,7 @@ async function wtGuestRsvp(data,res){try{
 }catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
-(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621 "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
+(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
 // The client's chosen template is the ONLY guest view. The old single-design renderer below is retired and never runs.
 var _dk=(data.design_key||'').trim();
