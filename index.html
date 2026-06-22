@@ -3681,10 +3681,9 @@ if(!data){
 if(loading)loading.innerHTML='<div style="text-align:center;padding:40px;"><div class="gv-loading-logo" style="opacity:.6;margin-bottom:16px;">Awatu.</div><div style="font-family:Inter,sans-serif;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px;">Invitation not found or link has expired.</div><button onclick="closeGuestView()" style="padding:10px 24px;border-radius:22px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-size:13px;cursor:pointer;">Go back</button></div>';
 return;
 }
-window._wtMounted=false;
 populateGuestView(data);
-if(wrap)wrap.style.display='none';
-if(window._wtMounted){if(loading)loading.style.display='none';}
+if(loading)loading.style.display='none';
+if(wrap)wrap.style.display='block';
 if(data.bg_music){
 try{
 const existing=document.getElementById('gvBgAudio');
@@ -3817,21 +3816,8 @@ async function wtGuestRsvp(data,res){try{
 }catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
-(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
-(function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
-// The client's chosen template is the ONLY guest view. The old single-design renderer below is retired and never runs.
-var _dk=(data.design_key||'').trim();
-var _tpl=data.tpl||(typeof DESIGNS!=='undefined'&&DESIGNS[_dk]&&DESIGNS[_dk].tpl)||'bright-luxury';
-try{ if(window.WTPL&&typeof wtMountGuest==='function'){ return wtMountGuest(data,_tpl); } }
-catch(_e){ console.error('[Awatu] template render error:',_e); }
-// Reaching here means the template engine is not on this page (older build still live). Show a clean prompt, never the old design.
-try{
-  var _gv=document.getElementById('guestView'); if(_gv) _gv.classList.add('open');
-  var _ld=document.getElementById('gvLoading');
-  if(_ld){ _ld.style.display='flex'; _ld.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,.65);font-family:Inter,sans-serif"><div style="font-size:34px;font-style:italic;margin-bottom:14px;opacity:.6">Awatu.</div><div style="font-size:14px;max-width:280px;margin:0 auto;line-height:1.5">This invitation is loading the latest version. Please refresh the page.</div></div>'; }
-  var _wr=document.getElementById('gvWrap'); if(_wr) _wr.style.display='none';
-}catch(_e2){}
-return;
+var _h=document.getElementById('wtplHost');if(_h)_h.style.display='none';
+var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';
 const heroBg=document.getElementById('gvHeroBg');
 if(heroBg){
 if(data.bg_photo){
