@@ -5997,10 +5997,16 @@ function norm(d){
     tagline:d.tagline||'',
     dateStr:dateStr||'The Wedding Day',
     dateISO:(function(){
-      var base=d.date;
-      if(!base){var ds=d.date_str||dateStr;if(ds){var cc=String(ds).replace(/^[A-Za-z]+,\s*/,'');var t=new Date(cc);if(!isNaN(t))base=t;}}
-      if(!base)return '';
-      var dt=(base instanceof Date)?base:new Date(base);if(isNaN(dt))return '';
+      var raw=String(d.date||d.date_str||dateStr||'');var dt=null;
+      var iso=raw.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if(iso){dt=new Date(+iso[1],+iso[2]-1,+iso[3]);}
+      if(!dt||isNaN(dt)){var s=raw.replace(/^[A-Za-z]+,\s*/,'').trim();var MM={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+        var mt=s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);
+        if(mt&&MM[mt[2].slice(0,3).toLowerCase()]!=null){dt=new Date(+mt[3],MM[mt[2].slice(0,3).toLowerCase()],+mt[1]);}
+        else{var mt2=s.match(/([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})/);
+          if(mt2&&MM[mt2[1].slice(0,3).toLowerCase()]!=null){dt=new Date(+mt2[3],MM[mt2[1].slice(0,3).toLowerCase()],+mt2[2]);}
+          else{var tn=new Date(s);if(!isNaN(tn))dt=tn;}}}
+      if(!dt||isNaN(dt))return '';
       var tm=String(d.start_time||d.startTime||'').match(/(\d{1,2}):(\d{2})/);if(tm)dt.setHours(+tm[1],+tm[2],0,0);
       return dt.toISOString();
     })(),
