@@ -3796,14 +3796,14 @@ if(err)console.warn('[Awatu] save to '+table+' failed:',err.message,err.code);
 return err;
 }
 function wtYouTubeId(u){if(!u)return null;u=String(u);var m=u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);if(m)return m[1];if(/^[A-Za-z0-9_-]{11}$/.test(u))return u;return null;}
-function wtPlayMusic(src,host){if(!src)return;var id=wtYouTubeId(src);if(id){if(window._wtMusicEl&&window._wtMusicEl.contentWindow){try{window._wtMusicEl.contentWindow.postMessage(JSON.stringify({event:'command',func:window._wtMusicPlaying?'pauseVideo':'playVideo',args:[]}),'*');window._wtMusicPlaying=!window._wtMusicPlaying;}catch(e){}return;}var f=document.createElement('iframe');f.setAttribute('allow','autoplay; encrypted-media');f.setAttribute('playsinline','1');f.style.cssText='position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:.01;border:0;pointer-events:none;z-index:-1';f.src='https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&controls=0&playsinline=1&enablejsapi=1&modestbranding=1';(host||document.body).appendChild(f);window._wtMusicEl=f;window._wtMusicPlaying=true;window._wtMusicStarted=true;}else if(/^data:audio/i.test(String(src))){if(window._wtMusicEl&&window._wtMusicEl.play){try{if(window._wtMusicPlaying){window._wtMusicEl.pause();window._wtMusicPlaying=false;}else{window._wtMusicEl.play().catch(function(){});window._wtMusicPlaying=true;}}catch(e){}return;}try{var a=new Audio(src);a.loop=true;a.play().catch(function(){});window._wtMusicEl=a;window._wtMusicPlaying=true;window._wtMusicStarted=true;}catch(e){}}}
+function wtPlayMusic(src,host){if(window._wtMusicStarted||!src)return;window._wtMusicStarted=true;var id=wtYouTubeId(src);if(id){var f=document.createElement('iframe');f.setAttribute('allow','autoplay');f.style.cssText='position:fixed;left:-300px;top:-300px;width:2px;height:2px;opacity:0;border:0;pointer-events:none';f.src='https://www.youtube.com/embed/'+id+'?autoplay=1&loop=1&playlist='+id+'&controls=0&playsinline=1&modestbranding=1';(host||document.body).appendChild(f);window._wtMusicEl=f;}else if(/^data:audio/i.test(String(src))){try{var a=new Audio(src);a.loop=true;a.play().catch(function(){});window._wtMusicEl=a;}catch(e){}}}
 function wtMountGuest(data,tpl){var gv=document.getElementById('guestView');var host=document.getElementById('wtplHost');
  if(!host){host=document.createElement('div');host.id='wtplHost';if(gv)gv.appendChild(host);}
  var _aw=document.getElementById('gvSeal');if(_aw)_aw.style.display='none';
  host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:1000000;display:block;background:#0a0806';window._wtMounted=true;['gvWrap','gvSeal','gvLoading'].forEach(function(_id){var _e=document.getElementById(_id);if(_e)_e.style.display='none';});
- var r;try{r=WTPL.render(tpl,data);}catch(_re){console.error("[Awatu] render failed:",_re);host.innerHTML="<div style=\"min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;color:#bbb;font-family:Inter,sans-serif\"><div><div style=\"font-size:30px;font-style:italic;margin-bottom:12px;opacity:.7\">Awatu.</div><div style=\"font-size:14px;line-height:1.6;max-width:280px\">This invitation could not be displayed. Please refresh the page.</div></div></div>";window._wtMounted=true;return;}host.innerHTML=r.html;window._gvInviteData=data;
+ var r=WTPL.render(tpl,data);host.innerHTML=r.html;window._gvInviteData=data;
  WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{window.open(wtCalUrl(data),'_blank','noopener');}catch(e){}},onMap:function(){try{window.open(wtMapUrl(data),'_blank','noopener');}catch(e){}}});
- window._wtMusicStarted=false;window._wtMusicEl=null;window._wtMusicPlaying=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);var _x=document.getElementById('wtMusicBtn');if(_x)_x.style.opacity='1';},{once:true});});var _mb=document.getElementById('wtMusicBtn');if(_mb)_mb.remove();_mb=document.createElement('button');_mb.id='wtMusicBtn';_mb.type='button';_mb.setAttribute('aria-label','Play or pause music');_mb.innerHTML='&#9835;';_mb.style.cssText='position:fixed;right:14px;bottom:14px;z-index:1000002;width:46px;height:46px;border-radius:50%;border:1px solid rgba(140,140,140,.45);background:rgba(20,20,20,.5);color:#fff;font-size:19px;line-height:1;cursor:pointer;opacity:.55;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)';_mb.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);_mb.style.opacity=window._wtMusicPlaying?'1':'.45';});document.body.appendChild(_mb);}
+ window._wtMusicStarted=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);},{once:true});});}
  var loading=document.getElementById('gvLoading');if(loading)loading.style.display='none';}
 async function wtGuestRsvp(data,res){try{
  if(!data||!data.id||String(data.id).indexOf('preview')===0){if(typeof showToast==='function')showToast('This is a preview — RSVP is disabled');return;}
@@ -3817,7 +3817,7 @@ async function wtGuestRsvp(data,res){try{
 }catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
-(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL3 "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
+(function(){try{var _b=document.getElementById("awBuildBadge")||document.createElement("div");_b.id="awBuildBadge";_b.textContent="build 0621-WTPL "+(window.WTPL?"engine OK":"engine MISSING");_b.style.cssText="position:fixed;left:6px;bottom:6px;z-index:2147483647;font:600 9px Inter,sans-serif;color:rgba(255,255,255,.5);background:rgba(0,0,0,.45);padding:2px 7px;border-radius:6px;pointer-events:none";document.body.appendChild(_b);}catch(e){}})();
 (function(){var _h=document.getElementById('wtplHost');if(_h){_h.style.display='none';}var _s=document.getElementById('gvSeal');if(_s)_s.style.display='';})();
 // The client's chosen template is the ONLY guest view. The old single-design renderer below is retired and never runs.
 var _dk=(data.design_key||'').trim();
@@ -3862,8 +3862,9 @@ if(data.date_str)rows.push({icon:_i.cal,text:data.date_str});
 if(data.start_time)rows.push({icon:_i.clock,text:data.start_time+(data.end_time?' – '+data.end_time:'')});
 if(data.venue)rows.push({icon:_i.pin,text:data.venue});
 if(data.location&&data.location!==data.venue)rows.push({icon:_i.pin,text:data.location});
+const mapHref=(data.map_url&&String(data.map_url).trim())?data.map_url:((data.venue||data.location)?('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(data.venue||data.location)):'');
 details.innerHTML=rows.map(r=>`<div class="gv-detail"><span class="gv-detail-icon">${r.icon}</span><span class="gv-detail-text">${r.text}</span></div>`).join('')
-+(data.map_url?`<a class="gv-map-link" href="${data.map_url}" target="_blank" rel="noopener">View location <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`:'');
++(mapHref?`<a class="gv-map-link" href="${mapHref}" target="_blank" rel="noopener">View location <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`:'');
 }
 // ── Monogram from names ("John & Jane" → "J · J") ──
 const mono=el('gvMono');
@@ -4227,6 +4228,7 @@ const hm=(window.location.hash||'').match(/^#invite\/([a-z0-9]+)/i);
 if(hm){inviteData={id:hm[1]};window._gvInviteData=inviteData;}
 else{showToast('Connection issue — please reopen your invitation link','error',5000);return;}
 }
+if(String(inviteData.id||'').slice(0,7)==='preview'){showToast('Preview only — your guests\' RSVPs are saved on the live, shared invitation','',4800);return;}
 const rsvpKey='awatu_rsvp_'+inviteData.id;
 if(localStorage.getItem(rsvpKey)){
 showToast('You have already responded to this invitation','');
@@ -4292,9 +4294,6 @@ if(calSec)calSec.style.display='flex';
 function closeGuestView(){
 if(window._gvCdTimer){clearInterval(window._gvCdTimer);window._gvCdTimer=null;}
 const _a=document.getElementById('gvBgAudio');if(_a){_a.pause();_a.remove();}
-var _mb=document.getElementById('wtMusicBtn');if(_mb)_mb.remove();
-try{if(window._wtMusicEl){if(window._wtMusicEl.remove)window._wtMusicEl.remove();if(window._wtMusicEl.pause)window._wtMusicEl.pause();}}catch(e){}
-window._wtMusicEl=null;window._wtMusicStarted=false;window._wtMusicPlaying=false;
 const gv=document.getElementById('guestView');
 if(gv)gv.classList.remove('open');
 document.body.style.overflow='';
@@ -6247,7 +6246,7 @@ function norm(d){
            {when:'Growing together',title:'The adventure',text:'Cities and slow mornings, the kind of love that deepens with every shared horizon.'},
            {when:'Forever',title:'The proposal',text:'Under a sky full of stars, a question was asked, and a lifetime quietly said yes.'}];
   }
-  let photos=d.photos;if(typeof photos==='string'){try{photos=JSON.parse(photos);}catch(e){photos=[];}}if(!Array.isArray(photos))photos=[];photos=photos.map(p=>typeof p==='string'?p:(p&&p.data)||'').filter(x=>x&&(x.indexOf('data:image')===0||/^https?:/.test(x)));
+  let photos=(d.photos||[]).map(p=>typeof p==='string'?p:(p&&p.data)||'').filter(x=>x&&x.indexOf('data:image')===0||/^https?:/.test(x));
   return {
     tpl:d.tpl||'bright-luxury',
     names:names, a:a, b:b,
@@ -6255,14 +6254,10 @@ function norm(d){
     tagline:d.tagline||'',
     dateStr:dateStr||'The Wedding Day',
     dateISO:(function(){
-      var MO={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-      function P(s){if(!s)return null;s=String(s).replace(/^[A-Za-z]+,\s*/,'').trim();
-        var iso=s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);if(iso)return new Date(+iso[1],+iso[2]-1,+iso[3]);
-        var a=s.match(/(\d{1,2})\s+([A-Za-z]{3,})\s+(\d{4})/);if(a&&MO[a[2].slice(0,3).toLowerCase()]!=null)return new Date(+a[3],MO[a[2].slice(0,3).toLowerCase()],+a[1]);
-        var b=s.match(/([A-Za-z]{3,})\s+(\d{1,2}),?\s+(\d{4})/);if(b&&MO[b[1].slice(0,3).toLowerCase()]!=null)return new Date(+b[3],MO[b[1].slice(0,3).toLowerCase()],+b[2]);
-        var x=new Date(s);return isNaN(x)?null:x;}
-      var dt=P(d.date)||P(d.date_str)||P(dateStr);
-      if(!dt||isNaN(dt))return '';
+      var base=d.date;
+      if(!base){var ds=d.date_str||dateStr;if(ds){var cc=String(ds).replace(/^[A-Za-z]+,\s*/,'');var t=new Date(cc);if(!isNaN(t))base=t;}}
+      if(!base)return '';
+      var dt=(base instanceof Date)?base:new Date(base);if(isNaN(dt))return '';
       var tm=String(d.start_time||d.startTime||'').match(/(\d{1,2}):(\d{2})/);if(tm)dt.setHours(+tm[1],+tm[2],0,0);
       return dt.toISOString();
     })(),
