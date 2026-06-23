@@ -3608,7 +3608,7 @@ if(data.start_time)rows.push({icon:_i.clock,text:data.start_time+(data.end_time?
 if(data.venue)rows.push({icon:_i.pin,text:data.venue});
 if(data.location&&data.location!==data.venue)rows.push({icon:_i.pin,text:data.location});
 details.innerHTML=rows.map(r=>`<div class="gv-detail"><span class="gv-detail-icon">${r.icon}</span><span class="gv-detail-text">${r.text}</span></div>`).join('')
-+(data.map_url?`<a class="gv-map-link" href="${data.map_url}" target="_blank" rel="noopener">View location <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`:'');
++((data.map_url||data.venue||data.location)?`<a class="gv-map-link" href="${wtMapUrl(data)}" target="_blank" rel="noopener">Open in Maps <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>`:'');
 }
 // ── Monogram from names ("John & Jane" → "J · J") ──
 const mono=el('gvMono');
@@ -3973,12 +3973,19 @@ if(hm){inviteData={id:hm[1]};window._gvInviteData=inviteData;}
 else{showToast('Connection issue — please reopen your invitation link','error',5000);return;}
 }
 const rsvpKey='awatu_rsvp_'+inviteData.id;
-if(localStorage.getItem(rsvpKey)){
-showToast('You have already responded to this invitation','');
+const btn=document.getElementById('gvSubmitBtn');
+if(btn){btn.textContent='Checking…';btn.disabled=true;}
+// One response per person on this shared invite: block if this name (or email) already responded
+const _norm=s=>(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+try{
+const {data:prior}=await _sb.from('rsvps').select('guest_name,guest_email').eq('invite_id',inviteData.id).limit(2000);
+if(Array.isArray(prior)&&prior.some(r=>_norm(r.guest_name)===_norm(name)||(email&&r.guest_email&&_norm(r.guest_email)===_norm(email)))){
+showToast('Looks like "'+name+'" has already responded to this invitation','',4500);
+if(btn){btn.textContent='Send RSVP';btn.disabled=false;}
 return;
 }
-const btn=document.getElementById('gvSubmitBtn');
-if(btn){btn.textContent='Sending…';btn.disabled=true;}
+}catch(e){ console.warn('[Awatu] RSVP duplicate check failed, allowing submit:',e); }
+if(btn){btn.textContent='Sending…';}
 const {error}=await _sb.from('rsvps').insert({
 invite_id:inviteData.id,
 guest_name:name,
@@ -3987,7 +3994,11 @@ status:gvSelectedRsvp,
 message
 });
 if(error){
+if(error.code==='23505'||/duplicate|unique/i.test(error.message||'')){
+showToast('Looks like "'+name+'" has already responded to this invitation','',4500);
+}else{
 showToast('Something went wrong. Please try again.');
+}
 if(btn){btn.textContent='Send RSVP';btn.disabled=false;}
 return;
 }
@@ -4015,8 +4026,7 @@ const {data:counts}=await _sb.from('rsvps')
 .eq('status','accepted');
 }
 } catch(e){ console.warn('RSVP count update:', e); }
-try{localStorage.setItem('awatu_rsvp_'+inviteData.id,'1');}catch(e){}
-localStorage.setItem(rsvpKey,JSON.stringify({status:gvSelectedRsvp,name:name,message:message||'',ts:Date.now()}));
+try{localStorage.setItem(rsvpKey,JSON.stringify({status:gvSelectedRsvp,name:name,message:message||'',ts:Date.now()}));}catch(e){}
 document.getElementById('gvRsvpSection').style.display='none';
 const confirmed=document.getElementById('gvConfirmed');
 const icon=document.getElementById('gvConfirmedIcon');
