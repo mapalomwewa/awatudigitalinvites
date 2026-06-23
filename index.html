@@ -288,6 +288,12 @@
 .nav-user-icon svg{color:#fff!important}
 .gv-close-btn{z-index:100000!important;background:rgba(20,16,12,.78)!important;color:#fff!important;border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 4px 16px rgba(0,0,0,.28)!important;font-weight:600!important}
 .gv-close-btn:hover{background:var(--accent)!important;border-color:var(--accent)!important}
+/* Sign-in loading spinner + nav sign-out button */
+@keyframes awAuthSpin{to{transform:rotate(360deg)}}
+.auth-btn-loading{position:relative!important;color:transparent!important;pointer-events:none!important;opacity:.9}
+.auth-btn-loading::after{content:'';position:absolute;width:16px;height:16px;top:50%;left:50%;margin:-8px 0 0 -8px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:awAuthSpin .6s linear infinite}
+.nav-signout-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:7px 14px;border-radius:22px;cursor:pointer;background:transparent;color:var(--ink);border:1.5px solid var(--border);transition:all .2s;white-space:nowrap;align-items:center}
+.nav-signout-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
 </style>
 
 </head>
@@ -311,6 +317,7 @@
         <div class="nav-user-logged-av" id="navUserAv">A</div>
         <span class="nav-user-logged-name" id="navUserName">My Account</span>
       </div>
+      <button class="nav-signout-btn" id="navSignOutBtn" onclick="logout()" aria-label="Sign out" style="display:none;">Sign out</button>
       <div class="nav-user" id="navMenuBtn" onclick="toggleMobMenu()">
         <div class="nav-user-icon">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -4232,12 +4239,14 @@ const mobSignIn=$('mobSignInBtn');
 if(currentUser){
 if(navBtns)navBtns.style.display='none';
 if(navLogged)navLogged.style.display='flex';
+if($('navSignOutBtn'))$('navSignOutBtn').style.display='inline-flex';
 if(navAv)navAv.textContent=(currentUser.name||'A')[0].toUpperCase();
 if(navNm)navNm.textContent=currentUser.name;
 if(mobSignIn)mobSignIn.style.display='none';
 } else {
 if(navBtns)navBtns.style.display='flex';
 if(navLogged)navLogged.style.display='none';
+if($('navSignOutBtn'))$('navSignOutBtn').style.display='none';
 if(mobSignIn)mobSignIn.style.display='block';
 }
 }
@@ -5210,8 +5219,10 @@ async function submitAuth(){
 
   if(!pw || pw.length < 6){ showToast('Password must be at least 6 characters'); return; }
 
+  if(submitAuth._busy) return;
+  submitAuth._busy = true;
   const btn = document.getElementById('authSubmit');
-  if(btn){ btn.textContent = 'Please wait…'; btn.disabled = true; }
+  if(btn){ btn.textContent = 'Please wait…'; btn.disabled = true; btn.classList.add('auth-btn-loading'); }
 
   try {
     if(authMode === 'signup'){
@@ -5231,7 +5242,11 @@ async function submitAuth(){
       }
     } else {
       const {data, error} = await _sb.auth.signInWithPassword({email, password:pw});
-      if(error){ showToast('Incorrect email or password', 'error'); return; }
+      if(error){
+        const needsConfirm=/confirm/i.test(error.message||'');
+        showToast(needsConfirm?'Please confirm your email first — check your inbox for the confirmation link.':'Incorrect email or password', 'error', needsConfirm?6000:3500);
+        return;
+      }
       currentUser = {id:data.user.id, name:email.split('@')[0], email:data.user.email||email};
       updateSidebarUser();
       closeAuth();
@@ -5246,10 +5261,9 @@ async function submitAuth(){
   } catch(e){
     console.error('[Awatu] submitAuth error:', e);
     showToast('Error: ' + e.message, 'error', 5000);
-    closeAuth();
   } finally {
-    if(btn){ btn.textContent = authMode==='signup'?'Create Account':'Sign In'; btn.disabled = false; }
-    closeAuth();
+    submitAuth._busy = false;
+    if(btn){ btn.textContent = authMode==='signup'?'Create Account':'Sign In'; btn.disabled = false; btn.classList.remove('auth-btn-loading'); }
   }
 }
 // ── END AUTH ──────────────────────────────────────────────────────────────────
