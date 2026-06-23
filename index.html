@@ -278,6 +278,16 @@
 .gvp-rsvp-yes,.gvp-rsvp-no{padding:11px;border-radius:40px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;}
 .gvp-rsvp-yes{background:var(--gva,#c8a96d);color:#1a1208;}
 .gvp-rsvp-no{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);}
+/* ===== Nav + guest-view legibility (appended) ===== */
+.nav-logo{color:var(--ink)!important}
+.nav-logo span{color:var(--accent)!important}
+.nav-signin-btn,.nav-signin-btn:focus{background:var(--accent)!important;color:#fff!important;border:1.5px solid var(--accent)!important}
+.nav-signin-btn:hover{background:#a2772f!important;border-color:#a2772f!important}
+.nav-user{background:rgba(255,255,255,.85)!important;border:1.5px solid var(--border)!important;backdrop-filter:blur(8px)!important}
+.nav-user-icon{background:var(--ink)!important}
+.nav-user-icon svg{color:#fff!important}
+.gv-close-btn{z-index:100000!important;background:rgba(20,16,12,.78)!important;color:#fff!important;border:1px solid rgba(255,255,255,.45)!important;box-shadow:0 4px 16px rgba(0,0,0,.28)!important;font-weight:600!important}
+.gv-close-btn:hover{background:var(--accent)!important;border-color:var(--accent)!important}
 </style>
 
 </head>
@@ -5856,7 +5866,7 @@ if(taps>=5){taps=0;if(typeof runAwatuDiagnostic==='function')runAwatuDiagnostic(
         </div>
       </div>
     </div>
-    <button class="gv-close-btn" onclick="closeGuestView()" aria-label="Close invitation">&#x2190; Close</button>
+    <button class="gv-close-btn" onclick="closeGuestView()" aria-label="Go back">&#x2190; Back</button>
 
     <div class="gv-hero" id="gvHero">
       <div class="gv-hero-bg" id="gvHeroBg"></div>
