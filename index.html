@@ -7,12 +7,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Awatu · Beautiful Digital Invitations</title>
-<meta name="description" content="Create and share stunning digital invitations for weddings, birthdays and more. Beautiful designs, instant RSVP tracking.">
+<meta name="description" content="Create and share stunning digital wedding invitations. Beautiful designs, instant RSVP tracking.">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Awatu">
 <meta property="og:title" content="Awatu · Beautiful Digital Invitations">
-<meta property="og:description" content="Create stunning digital invitations and track RSVPs in real time. Over 60 designs for weddings, birthdays and more.">
+<meta property="og:description" content="Create stunning digital wedding invitations and track RSVPs in real time. Beautiful designs for your big day.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&h=630&fit=crop&auto=format&q=58">
 <meta property="og:url" content="https://awatu.co.zm">
 
@@ -276,7 +276,8 @@
 .gvp-rsvp{background:#14100c;padding:26px 22px 40px;text-align:center;}
 .gvp-rsvp-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#efe7db;margin-bottom:16px;}
 .gvp-rsvp-btns{display:flex;flex-direction:column;gap:8px;}
-.gvp-rsvp-yes,.gvp-rsvp-no{padding:11px;border-radius:40px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;}
+.gvp-rsvp-yes,.pkg-soon{opacity:.55;}
+.gvp-rsvp-no{padding:11px;border-radius:40px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.06em;}
 .gvp-rsvp-yes{background:var(--gva,#c8a96d);color:#1a1208;}
 .gvp-rsvp-no{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);}
 /* ===== Nav + guest-view legibility (appended) ===== */
@@ -345,26 +346,6 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
         Create invite
       </button>
-    </div>
-    </div>
-  <div class="awh-pills">
-    <div class="pill-bar" id="pillBar">
-      <div class="pill active" onclick="filterPill(this,'all')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        All designs
-      </div>
-      <div class="pill" onclick="filterPill(this,'wedding')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Weddings
-      </div>
-      <div class="pill" onclick="filterPill(this,'birthday')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Birthday
-      </div>
-      <div class="pill" onclick="filterPill(this,'traditional')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Traditional
-      </div>
     </div>
     </div>
   </div>
@@ -594,231 +575,102 @@
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="birthday" onclick="openInvite('b1')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('w11')">
       <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1464349153735-7db50ed83c84?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(50,16,10,.42);opacity:1;"></div>
-
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <div class="gal-img-inner" style="background:linear-gradient(135deg,#3a342c,#1a1714);position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.5));"></div>
+          <span class="gal-badge" style="background:rgba(255,255,255,.2);color:#fff;">Photo background</span>
+          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Raleway',sans-serif;font-size:7px;color:rgba(255,200,185,.65);font-weight:300;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">Join us to celebrate</div>
-    <div style="font-family:'Great Vibes',cursive;font-size:36px;color:#fff8f5;line-height:1.2;">Towani's<br>23rd Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(255,200,185,.35);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(255,230,215,.45);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Lusaka · July 5</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div></div>
+            <div style="font-family:'Cinzel',serif;font-size:6px;color:rgba(255,255,255,.7);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;">&#128247; Your photo here</div>
+            <div style="font-family:'Cinzel',serif;font-size:7px;color:#dcc07e;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;">Together with their families</div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;line-height:1.15;text-shadow:0 2px 12px rgba(0,0,0,.5);">Amara &amp; Victor</div>
+            <div style="width:36px;height:1px;background:rgba(220,192,126,.5);margin:8px auto;"></div>
+            <div style="font-family:'Cinzel',serif;font-size:8px;color:rgba(255,255,255,.7);letter-spacing:.16em;text-transform:uppercase;">Wedding &#183; Photo Background</div>
           </div>
         </div>
       </div>
       <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Towani's 23rd Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.94</div></div>
-        <div class="gal-info-c">Birthday · Celebration · Blush</div>
+        <div class="gal-row1"><div class="gal-info-t">Photo Background</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5.0</div></div>
+        <div class="gal-info-c">Wedding &#183; Warm &#183; Gold</div>
         <div class="gal-price"><strong>K450</strong> / invitation</div>
       </div>
     </div>
 
-    <div class="gal-card sr d1" data-cat="birthday" onclick="openInvite('b2')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('w12')">
       <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(4,2,10,.72);opacity:1;"></div>
-          <span class="gal-badge" style="background:rgba(255,255,255,.18);color:rgba(255,255,255,.95);">🔥 Hot</span>
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <div class="gal-img-inner" style="background:linear-gradient(135deg,#33424c,#16212a);position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.5));"></div>
+          <span class="gal-badge" style="background:rgba(255,255,255,.2);color:#fff;">Photo background</span>
+          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:1;" xmlns="http://www.w3.org/2000/svg"><pattern id="pd" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="rgba(200,160,255,.07)"/></pattern><rect width="100%" height="100%" fill="url(#pd)"/></svg>
-    <div style="font-family:'Cinzel',serif;font-size:7px;color:rgba(200,160,255,.55);font-weight:400;margin-bottom:6px;">You're Invited</div>
-    <div style="font-family:'Sacramento',cursive;font-size:38px;color:#fff;line-height:1.2;">Moonga's<br>28th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(200,160,255,.28);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(220,200,255,.4);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Saturday · The Latitude · 9PM</div>
-    <div class="gal-dots"><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div></div>
+            <div style="font-family:'Cinzel',serif;font-size:6px;color:rgba(255,255,255,.7);letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;">&#128247; Your photo here</div>
+            <div style="font-family:'Cinzel',serif;font-size:7px;color:#c4d6de;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px;">Together with their families</div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;line-height:1.15;text-shadow:0 2px 12px rgba(0,0,0,.5);">Naledi &amp; Thabo</div>
+            <div style="width:36px;height:1px;background:rgba(196,214,222,.5);margin:8px auto;"></div>
+            <div style="font-family:'Cinzel',serif;font-size:8px;color:rgba(255,255,255,.7);letter-spacing:.16em;text-transform:uppercase;">Wedding &#183; Photo Background</div>
           </div>
         </div>
       </div>
       <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Moonga's 28th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.92</div></div>
-        <div class="gal-info-c">Birthday · Nightclub · Dark</div>
+        <div class="gal-row1"><div class="gal-info-t">Photo Background</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5.0</div></div>
+        <div class="gal-info-c">Wedding &#183; Cool &#183; Navy</div>
         <div class="gal-price"><strong>K450</strong> / invitation</div>
       </div>
     </div>
 
-    <div class="gal-card sr d2" data-cat="birthday" onclick="openInvite('b3')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('w13')">
       <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(10,6,2,.6);opacity:1;"></div>
-          <span class="gal-badge" style="background:rgba(255,255,255,.18);color:rgba(255,255,255,.95);">Milestone</span>
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <div class="gal-img-inner" style="background:radial-gradient(120% 90% at 50% 0,#F7F3EC,#EFE7D8);position:relative;">
+          <span class="gal-badge" style="background:rgba(156,122,60,.16);color:#5a2a2a;">Butterfly</span>
+          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:1;" xmlns="http://www.w3.org/2000/svg"><pattern id="pc" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="16" fill="none" stroke="rgba(200,169,109,.07)" stroke-width=".8"/></pattern><rect width="100%" height="100%" fill="url(#pc)"/></svg>
-    <div style="font-family:'Cinzel',serif;font-size:7px;color:rgba(200,169,109,.6);font-weight:400;margin-bottom:6px;">A Golden Milestone</div>
-    <div style="font-family:'Great Vibes',cursive;font-size:36px;color:#f5e8c0;line-height:1.2;">Marvin's<br>35th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(200,169,109,.35);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(200,169,109,.5);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Gala Dinner · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div></div>
+<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:#7a5a4a;">together with their families</div><div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.18em;color:#5a2a2a;margin:5px 0;">AT THE MARRIAGE OF</div><div style="font-family:'Great Vibes',cursive;font-size:26px;color:#9c7a3c;">Amara &amp; Joseph</div><div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.16em;color:#9a8a78;margin-top:8px;">14 June 2025</div>
           </div>
         </div>
       </div>
       <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Marvin's 35th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.97</div></div>
-        <div class="gal-info-c">Birthday · Milestone · Gold</div>
+        <div class="gal-row1"><div class="gal-info-t">Butterfly Cream</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5.0</div></div>
+        <div class="gal-info-c">Wedding &#183; Butterfly &#183; Elegant</div>
         <div class="gal-price"><strong>K450</strong> / invitation</div>
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="birthday" onclick="openInvite('b4')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('w14')">
       <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(4,20,10,.52);opacity:1;"></div>
-          <span class="gal-badge" style="background:rgba(255,255,255,.18);color:rgba(255,255,255,.95);">Fun &amp; Bright</span>
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <div class="gal-img-inner" style="background:linear-gradient(165deg,#831f26,#5e0f17);position:relative;">
+          <span class="gal-badge" style="background:rgba(255,255,255,.18);color:#f3e3dc;">Romantic</span>
+          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Josefin Sans',sans-serif;font-size:7px;color:rgba(100,220,150,.5);font-weight:300;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;">Pool Party</div>
-    <div style="font-family:'Sacramento',cursive;font-size:38px;color:#e8fff2;line-height:1.2;">Kizito's<br>26th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(100,220,150,.28);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(200,255,220,.4);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Poolside · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div></div>
+<div style="font-family:'Great Vibes',cursive;font-size:30px;color:#f0d590;">You are invited</div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#f3e3dc;margin-top:10px;">Lwendo &amp; Mutale</div><div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.16em;color:#d8b0a4;margin-top:8px;">ARE GETTING MARRIED &#183; 5 JULY 2025</div>
           </div>
         </div>
       </div>
       <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Kizito's 26th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.88</div></div>
-        <div class="gal-info-c">Birthday · Pool · Fun</div>
+        <div class="gal-row1"><div class="gal-info-t">Romantic Red</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5.0</div></div>
+        <div class="gal-info-c">Wedding &#183; Romantic &#183; Bold</div>
         <div class="gal-price"><strong>K450</strong> / invitation</div>
       </div>
     </div>
 
-    <div class="gal-card sr d1" data-cat="birthday" onclick="openInvite('b5')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('w15')">
       <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1531058020387-3be344556be6?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(20,8,36,.45);opacity:1;"></div>
-
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+        <div class="gal-img-inner" style="background:#DFE4D6;position:relative;">
+          <span class="gal-badge" style="background:rgba(70,85,47,.16);color:#3c4a2c;">Sage</span>
+          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
           <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:1;" xmlns="http://www.w3.org/2000/svg"><pattern id="pch" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><polyline points="0,10 10,0 20,10" fill="none" stroke="rgba(200,160,255,.07)" stroke-width="1"/><polyline points="0,20 10,10 20,20" fill="none" stroke="rgba(200,160,255,.07)" stroke-width="1"/></pattern><rect width="100%" height="100%" fill="url(#pch)"/></svg>
-    <div style="font-family:'Raleway',sans-serif;font-size:7px;color:rgba(200,160,255,.6);font-weight:300;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">Sweet Sixteen</div>
-    <div style="font-family:'Bodoni Moda',serif;font-size:26px;color:#fff;font-weight:400;font-style:italic;line-height:1.2;">Lushomo's<br>24th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(200,160,255,.28);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(220,200,255,.45);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">August 2025 · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div></div>
+<div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.26em;color:#46552f;">YOU ARE INVITED</div><div style="font-family:'Great Vibes',cursive;font-size:26px;color:#3c4a2c;margin:4px 0;">Chembe &amp; Naomi</div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:#5a6a45;">are getting married</div><div style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:.16em;color:#5a6a45;margin-top:8px;">9 August 2025</div>
           </div>
         </div>
       </div>
       <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Lushomo's 24th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.91</div></div>
-        <div class="gal-info-c">Birthday · Teen · Pastel</div>
-        <div class="gal-price"><strong>K300</strong> / invitation</div>
-      </div>
-    </div>
-
-    <div class="gal-card sr d2" data-cat="birthday" onclick="openInvite('b6')">
-      <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1513151233558-d860c5398176?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(30,4,8,.6);opacity:1;"></div>
-
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Cinzel',serif;font-size:7px;color:rgba(255,160,160,.5);font-weight:400;margin-bottom:6px;">Celebrate Good Times</div>
-    <div style="font-family:'Playfair Display',serif;font-size:26px;color:#fff8f8;font-weight:400;font-style:italic;line-height:1.2;">Sam's<br>30th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(255,160,160,.28);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(255,230,230,.4);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">VIP Dinner · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Sam's 30th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.90</div></div>
-        <div class="gal-info-c">Birthday · Vibrant · Red</div>
+        <div class="gal-row1"><div class="gal-info-t">Sage Botanical</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 5.0</div></div>
+        <div class="gal-info-c">Wedding &#183; Botanical &#183; Classic</div>
         <div class="gal-price"><strong>K450</strong> / invitation</div>
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="birthday" onclick="openInvite('b7')">
-      <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(16,8,2,.38);opacity:1;"></div>
-
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Raleway',sans-serif;font-size:7px;color:rgba(60,30,8,.55);font-weight:300;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">Boho Birthday</div>
-    <div style="font-family:'Sacramento',cursive;font-size:36px;color:#1e0e04;line-height:1.2;">Mwewa's<br>25th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(60,30,8,.22);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(40,20,4,.45);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Garden Party · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(46,42,39,.22);"></div><div class="gal-dot" style="background:rgba(46,42,39,.22);"></div><div class="gal-dot active" style="background:#2E2A27;width:16px;border-radius:3px;"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Mwewa's 25th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.93</div></div>
-        <div class="gal-info-c">Birthday · Earthy · Boho</div>
-        <div class="gal-price"><strong>K450</strong> / invitation</div>
-      </div>
-    </div>
-
-    <div class="gal-card sr d1" data-cat="birthday" onclick="openInvite('b8')">
-      <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(8,28,60,.42);opacity:1;"></div>
-
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Raleway',sans-serif;font-size:7px;color:rgba(150,200,255,.6);font-weight:300;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">Kids Birthday Party</div>
-    <div style="font-family:'Great Vibes',cursive;font-size:36px;color:#fff;line-height:1.2;">Kalombo's<br>12th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(150,200,255,.3);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(200,225,255,.45);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Saturday · Lusaka</div>
-    <div class="gal-dots"><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Kalombo's 12th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.89</div></div>
-        <div class="gal-info-c">Birthday · Children · Fun</div>
-        <div class="gal-price"><strong>K300</strong> / invitation</div>
-      </div>
-    </div>
-
-    <div class="gal-card sr d2" data-cat="birthday" onclick="openInvite('b9')">
-      <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(6,6,8,.72);opacity:1;"></div>
-          <span class="gal-badge" style="background:rgba(255,255,255,.18);color:rgba(255,255,255,.95);">Luxury</span>
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:1;" xmlns="http://www.w3.org/2000/svg"><pattern id="pdm" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><polygon points="12,0 24,12 12,24 0,12" fill="none" stroke="rgba(200,169,109,.07)" stroke-width=".8"/></pattern><rect width="100%" height="100%" fill="url(#pdm)"/></svg>
-    <div style="font-family:'Cinzel',serif;font-size:7px;color:rgba(200,169,109,.55);font-weight:400;margin-bottom:6px;">Black Tie Dinner</div>
-    <div style="font-family:'Sacramento',cursive;font-size:38px;color:#fff;line-height:1.2;">Mwamba's<br>14th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(200,169,109,.3);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(200,169,109,.45);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Gala · Protea Hotel</div>
-    <div class="gal-dots"><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Mwamba's 14th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.96</div></div>
-        <div class="gal-info-c">Birthday · Elegant · Formal</div>
-        <div class="gal-price"><strong>K900</strong> / invitation</div>
-      </div>
-    </div>
-
-    <div class="gal-card sr" data-cat="birthday" onclick="openInvite('b10')">
-      <div class="gal-img">
-        <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
-          <div style="position:absolute;inset:0;background:rgba(30,10,4,.38);opacity:1;"></div>
-          <span class="gal-badge" style="background:rgba(255,255,255,.22);color:#fff;">🎊 Surprise!</span>
-          <button class="gal-fav" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px;text-align:center;">
-            <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(255,255,255,.7);font-weight:300;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;">Surprise!</div>
-    <div style="font-family:'Sacramento',cursive;font-size:36px;color:#fff;line-height:1.2;">Malama's<br>9th Birthday</div>
-    <div style="width:36px;height:1px;background:rgba(255,255,255,.3);margin:7px auto;"></div>
-    <div style="font-family:'Josefin Sans',sans-serif;font-size:8px;color:rgba(255,255,255,.55);font-weight:300;letter-spacing:.14em;text-transform:uppercase;">Shh… keep it secret!</div>
-    <div class="gal-dots"><div class="gal-dot active" style="background:#fff;width:16px;border-radius:3px;"></div><div class="gal-dot" style="background:rgba(255,255,255,.35);"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="gal-body">
-        <div class="gal-row1"><div class="gal-info-t">Malama's 9th Birthday</div><div class="gal-rating"><svg width="10" height="10" fill="#222" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> 4.87</div></div>
-        <div class="gal-info-c">Birthday · Surprise · Warm</div>
-        <div class="gal-price"><strong>K300</strong> / invitation</div>
-      </div>
-    </div>
-
-    <div class="gal-card sr" data-cat="traditional" onclick="openInvite('t1')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('t1')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(10,20,14,.48);opacity:1;"></div>
@@ -841,7 +693,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d1" data-cat="traditional" onclick="openInvite('t2')">
+    <div class="gal-card sr d1" data-cat="wedding" onclick="openInvite('t2')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(24,8,2,.52);opacity:1;"></div>
@@ -864,7 +716,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d2" data-cat="traditional" onclick="openInvite('t3')">
+    <div class="gal-card sr d2" data-cat="wedding" onclick="openInvite('t3')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(40,30,20,.42);opacity:1;"></div>
@@ -886,7 +738,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="traditional" onclick="openInvite('t4')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('t4')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(4,14,6,.58);opacity:1;"></div>
@@ -908,7 +760,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d1" data-cat="traditional" onclick="openInvite('t5')">
+    <div class="gal-card sr d1" data-cat="wedding" onclick="openInvite('t5')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(36,12,4,.52);opacity:1;"></div>
@@ -930,7 +782,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d2" data-cat="traditional" onclick="openInvite('t6')">
+    <div class="gal-card sr d2" data-cat="wedding" onclick="openInvite('t6')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(4,10,20,.65);opacity:1;"></div>
@@ -953,7 +805,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="traditional" onclick="openInvite('t7')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('t7')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(20,10,2,.55);opacity:1;"></div>
@@ -975,7 +827,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d1" data-cat="traditional" onclick="openInvite('t8')">
+    <div class="gal-card sr d1" data-cat="wedding" onclick="openInvite('t8')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(230,218,200,.42);opacity:1;"></div>
@@ -997,7 +849,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr d2" data-cat="traditional" onclick="openInvite('t9')">
+    <div class="gal-card sr d2" data-cat="wedding" onclick="openInvite('t9')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1519671282429-b44660ead0a7?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(18,4,10,.62);opacity:1;"></div>
@@ -1020,7 +872,7 @@
       </div>
     </div>
 
-    <div class="gal-card sr" data-cat="traditional" onclick="openInvite('t10')">
+    <div class="gal-card sr" data-cat="wedding" onclick="openInvite('t10')">
       <div class="gal-img">
         <div class="gal-img-inner" style="background:url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=440&h=330&fit=crop&auto=format&q=58') center/cover;position:relative;">
           <div style="position:absolute;inset:0;background:rgba(4,20,24,.58);opacity:1;"></div>
@@ -1379,7 +1231,7 @@
       <div class="plan sr d4">
         <div class="plan-head">
           <div class="plan-tier">Premium</div>
-          <div class="plan-name">Custom</div>
+          <div class="plan-name">Custom <span style="display:inline-block;margin-left:6px;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8a6a3a;background:rgba(200,160,80,.16);padding:3px 8px;border-radius:20px;vertical-align:middle;">Coming soon</span></div>
           <div class="plan-price-row"><span class="plan-cur">K</span><span class="plan-amt">900</span></div>
           <div class="plan-note">One-time payment</div>
         </div>
@@ -1396,7 +1248,7 @@
             <li>RSVP dashboard + analytics</li>
             <li>Priority delivery</li>
           </ul>
-          <button class="plan-btn pb-out" onclick="openBooking('Custom')">Get started</button>
+          <button class="plan-btn pb-out" disabled style="opacity:.5;cursor:not-allowed;">Coming soon</button>
         </div>
       </div>
 
@@ -1526,7 +1378,7 @@
     <div class="footer-grid">
       <div>
         <div class="footer-logo"><span>A</span>watu<span>.</span></div>
-        <p class="footer-desc">Beautiful digital invitations for every occasion. Based in Lusaka, Zambia.</p>
+        <p class="footer-desc">Beautiful digital wedding invitations. Based in Lusaka, Zambia.</p>
         <div class="f-socs" style="margin-top:16px;">
           <a class="f-soc" onclick="openWA('General')" title="WhatsApp">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.1.546 4.07 1.5 5.778L0 24l6.347-1.48A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.667-.5-5.2-1.375l-.374-.22-3.868.901.934-3.784-.243-.39A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
@@ -1639,10 +1491,10 @@ w6:{tpl:'calla-noir',style:"background:radial-gradient(120% 90% at 30% 20%,rgba(
 w7:{tpl:'sage-classic',style:"background:linear-gradient(160deg,#ffffff,#eef2e7);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.10));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:7px;font-weight:400;color:#7a8b5e;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">We invite you</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:36px;color:#2f3a28;line-height:1.15;">Sophie &amp; Jeremy</div><div style="width:34px;height:1px;background:rgba(122,139,94,.4);margin:8px auto;"></div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:7px;color:#2f3a28;opacity:.7;letter-spacing:.16em;text-transform:uppercase;">Wedding · Sage Classic</div><div class="inv-tag" style="font-style:italic;color:#b08d4a;font-size:12px;font-family:'Playfair Display',serif;margin-top:7px;">“The big day”</div></div>`,name:"Sophie &amp; Jeremy",type:"Wedding · Sage Classic",pkg:"Standard",designKey:"w7",tpl:"sage-classic",sampleA:"Sophie",sampleB:"Jeremy",sampleStory:[{when:"The beginning",title:"A chance meeting",text:""},{when:"Growing together",title:"The adventure",text:""},{when:"Forever",title:"The proposal",text:""}]},
 w8:{tpl:'ivory-heirloom',style:"background:linear-gradient(160deg,#faf6ee,#efe7d8);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.10));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:7px;font-weight:400;color:#9a8c74;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">Save the date</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:36px;color:#4a4034;line-height:1.15;">Eleanor &amp; Henry</div><div style="width:34px;height:1px;background:rgba(154,140,116,.45);margin:8px auto;"></div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:7px;color:#4a4034;opacity:.7;letter-spacing:.16em;text-transform:uppercase;">Wedding · Ivory Heirloom</div><div class="inv-tag" style="font-style:italic;color:#8a7c64;font-size:12px;font-family:'Playfair Display',serif;margin-top:7px;">“An heirloom love”</div></div>`,name:"Eleanor &amp; Henry",type:"Wedding · Ivory Heirloom",pkg:"Standard",designKey:"w8",tpl:"ivory-heirloom",sampleA:"Eleanor",sampleB:"Henry",sampleStory:[{when:"The beginning",title:"A chance meeting",text:""},{when:"Growing together",title:"The adventure",text:""},{when:"Forever",title:"The proposal",text:""}]},
 w9:{tpl:'garden-watercolor',style:"background:radial-gradient(80px 70px at 18% 16%,rgba(192,138,134,.5),transparent 70%),radial-gradient(90px 80px at 86% 84%,rgba(169,178,126,.5),transparent 70%),#fdfaf4;position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.10));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:7px;font-weight:400;color:#a9b27e;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">A garden celebration</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:36px;color:#4a4438;line-height:1.15;">Iris &amp; Theo</div><div style="width:34px;height:1px;background:rgba(192,138,134,.4);margin:8px auto;"></div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:7px;color:#4a4438;opacity:.7;letter-spacing:.16em;text-transform:uppercase;">Wedding · Garden Watercolor</div><div class="inv-tag" style="font-style:italic;color:#c08a86;font-size:12px;font-family:'Playfair Display',serif;margin-top:7px;">“In full bloom”</div></div>`,name:"Iris &amp; Theo",type:"Wedding · Garden Watercolor",pkg:"Standard",designKey:"w9",tpl:"garden-watercolor",sampleA:"Iris",sampleB:"Theo",sampleStory:[{when:"The beginning",title:"A chance meeting",text:""},{when:"Growing together",title:"The adventure",text:""},{when:"Forever",title:"The proposal",text:""}]},
-w10:{tpl:'emerald-gold',style:"background:radial-gradient(120% 90% at 50% 0,#0f3a2a,#08231a 60%,#04140d);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.10));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:7px;font-weight:400;color:#dec07e;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">Together with their families</div><div class="inv-big" style="font-family:'Playfair Display',serif;font-size:30px;color:#f1ead6;line-height:1.15;">Marguerite &amp; Victor</div><div style="width:34px;height:1px;background:rgba(201,162,75,.5);margin:8px auto;"></div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:7px;color:#f1ead6;opacity:.7;letter-spacing:.16em;text-transform:uppercase;">Wedding · Emerald & Gold</div><div class="inv-tag" style="font-style:italic;color:#dec07e;font-size:12px;font-family:'Playfair Display',serif;margin-top:7px;">“Black tie”</div></div>`,name:"Marguerite &amp; Victor",type:"Wedding · Emerald & Gold",pkg:"Standard",designKey:"w10",tpl:"emerald-gold",sampleA:"Marguerite",sampleB:"Victor",sampleStory:[{when:"The beginning",title:"A chance meeting",text:""},{when:"Growing together",title:"The adventure",text:""},{when:"Forever",title:"The proposal",text:""}]},
-b1:{tpl:"binv-1",style:"background:radial-gradient(120% 100% at 50% 0%,#F7F3EC,#EFE7D8);position:relative;",body:`<div style="position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 0%,#F7F3EC,#EFE7D8);border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;padding:20px;text-align:center;"><svg width="70" height="58" viewBox="0 0 110 92" fill="none"><g stroke="#9c7a3c" stroke-width="1.6"><path d="M55 20 C40 0 8 4 12 30 C8 54 38 56 55 40" fill="#EFE7D8"/><path d="M55 20 C70 0 102 4 98 30 C102 54 72 56 55 40" fill="#EFE7D8"/><path d="M55 42 C44 56 22 60 26 78 C30 92 52 84 55 66" fill="#EFE7D8"/><path d="M55 42 C66 56 88 60 84 78 C80 92 58 84 55 66" fill="#EFE7D8"/><line x1="55" y1="16" x2="55" y2="70"/></g></svg><div style="flex:1"></div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:#7a5a4a;">you&#39;re</div><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.18em;color:#5a2a2a;margin:2px 0;">CORDIALLY INVITED</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:24px;color:#9c7a3c;">Towani</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.2em;color:#9a8a78;margin-top:auto;padding-top:8px;">5 JUL 2025</div></div>`,name:"Towani's Birthday",type:"Towani's Birthday",pkg:"Standard",designKey:"b1"},
-b2:{tpl:"binv-2",style:"background:linear-gradient(165deg,#831f26,#5e0f17);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(165deg,#831f26,#5e0f17);border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;"><div class="inv-eye" style="font-family:'Great Vibes',cursive;font-size:24px;color:#f0d590;">These are for you</div><div style="display:flex;gap:10px;margin:12px 0;"><svg width="20" height="24" viewBox="0 0 34 40" fill="none" stroke="#f0d590" stroke-width="2"><rect x="6" y="16" width="22" height="20"/><path d="M3 16h28v6H3z"/><path d="M17 16v20"/></svg><svg width="20" height="24" viewBox="0 0 34 40" fill="none" stroke="#f0d590" stroke-width="2"><path d="M8 22h18v12H8z"/><path d="M8 22c0-4 4-5 9-5s9 1 9 5"/><path d="M17 8v8"/></svg><svg width="20" height="24" viewBox="0 0 34 40" fill="none" stroke="#f0d590" stroke-width="2"><path d="M17 34c0-8-6-12-6-18a6 6 0 0112 0c0 6-6 10-6 18z"/></svg></div><div class="inv-big" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#f3e3dc;">Happy Birthday, Bupe</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.2em;color:#e0c2bb;margin-top:8px;">26 JUL 2025</div></div>`,name:"Bupe's Birthday",type:"Bupe's Birthday",pkg:"Standard",designKey:"b2"},
-b3:{tpl:"binv-3",style:"background:#DFE4D6;position:relative;",body:`<div style="position:absolute;inset:0;background:#DFE4D6;border-radius:inherit;overflow:hidden;"><svg style="position:absolute;width:46px;height:46px;top:8px;left:8px;" viewBox="0 0 74 74" fill="none" stroke="#7a8a55" stroke-width="1.6"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="#7a8a55" stroke="none"/><circle cx="40" cy="22" r="3" fill="#7a8a55" stroke="none"/><circle cx="28" cy="36" r="3" fill="#7a8a55" stroke="none"/></svg><svg style="position:absolute;width:46px;height:46px;bottom:8px;right:8px;transform:rotate(180deg);" viewBox="0 0 74 74" fill="none" stroke="#7a8a55" stroke-width="1.6"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="#7a8a55" stroke="none"/><circle cx="40" cy="22" r="3" fill="#7a8a55" stroke="none"/><circle cx="28" cy="36" r="3" fill="#7a8a55" stroke="none"/></svg></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.28em;color:#46552f;">YOU ARE INVITED</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:24px;color:#3c4a2c;margin:4px 0;">Chembe</div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:#5a6a45;">join us to celebrate</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.2em;color:#5a6a45;margin-top:8px;">13 AUG 2025</div></div>`,name:"Chembe's Birthday",type:"Chembe's Birthday",pkg:"Standard",designKey:"b3"},
+w10:{tpl:'emerald-gold',style:"background:radial-gradient(120% 90% at 50% 0,#0f3a2a,#08231a 60%,#04140d);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.10));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:7px;font-weight:400;color:#dec07e;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">Together with their families</div><div class="inv-big" style="font-family:'Playfair Display',serif;font-size:30px;color:#f1ead6;line-height:1.15;">Marguerite &amp; Victor</div><div style="width:34px;height:1px;background:rgba(201,162,75,.5);margin:8px auto;"></div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:7px;color:#f1ead6;opacity:.7;letter-spacing:.16em;text-transform:uppercase;">Wedding · Emerald & Gold</div><div class="inv-tag" style="font-style:italic;color:#dec07e;font-size:12px;font-family:'Playfair Display',serif;margin-top:7px;">“Black tie”</div></div>`,name:"Marguerite &amp; Victor",type:"Wedding · Emerald & Gold",pkg:"Standard",designKey:"w10",tpl:"emerald-gold",sampleA:"Marguerite",sampleB:"Victor",sampleStory:[{when:"The beginning",title:"A chance meeting",text:""},{when:"Growing together",title:"The adventure",text:""},{when:"Forever",title:"The proposal",text:""}]},w11:{tpl:"photo-bg-1",style:"background:#1a1714;position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(135deg,#3a342c,#1a1714);border-radius:inherit;"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.55));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;"><div style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:8px;">&#128247; YOUR PHOTO HERE</div><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.26em;text-transform:uppercase;color:#dcc07e;">Together with their families</div><div class="inv-big" style="font-family:'Playfair Display',serif;font-weight:700;font-size:22px;color:#fff;margin:8px 0;text-shadow:0 2px 12px rgba(0,0,0,.5);">Amara &amp; Joseph</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.75);">Saturday &#183; 14 June 2025</div></div>`,name:"Wedding · Photo Background",type:"Wedding · Photo Background",pkg:"Standard",designKey:"w11"},w12:{tpl:"photo-bg-2",style:"background:#16212a;position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(135deg,#33424c,#16212a);border-radius:inherit;"></div><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.55));border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;"><div style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:8px;">&#128247; YOUR PHOTO HERE</div><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.26em;text-transform:uppercase;color:#c4d6de;">Together with their families</div><div class="inv-big" style="font-family:'Playfair Display',serif;font-weight:700;font-size:22px;color:#fff;margin:8px 0;text-shadow:0 2px 12px rgba(0,0,0,.5);">Naledi &amp; Thabo</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.75);">Saturday &#183; 14 June 2025</div></div>`,name:"Wedding · Photo Background",type:"Wedding · Photo Background",pkg:"Standard",designKey:"w12"},
+w13:{tpl:"wed-bf",style:"background:radial-gradient(120% 100% at 50% 0%,#F7F3EC,#EFE7D8);position:relative;",body:`<div style="position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 0%,#F7F3EC,#EFE7D8);border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;padding:20px;text-align:center;"><svg width="68" height="56" viewBox="0 0 110 92" fill="none"><g stroke="#9c7a3c" stroke-width="1.6"><path d="M55 20 C40 0 8 4 12 30 C8 54 38 56 55 40" fill="#EFE7D8"/><path d="M55 20 C70 0 102 4 98 30 C102 54 72 56 55 40" fill="#EFE7D8"/><path d="M55 42 C44 56 22 60 26 78 C30 92 52 84 55 66" fill="#EFE7D8"/><path d="M55 42 C66 56 88 60 84 78 C80 92 58 84 55 66" fill="#EFE7D8"/><line x1="55" y1="16" x2="55" y2="70"/></g></svg><div style="flex:1"></div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:#7a5a4a;">together with their families</div><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.18em;color:#5a2a2a;margin:2px 0;">AT THE MARRIAGE OF</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:22px;color:#9c7a3c;">Amara &amp; Joseph</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.2em;color:#9a8a78;margin-top:auto;padding-top:8px;">14 JUNE 2025</div></div>`,name:"Wedding · Butterfly Cream",type:"Wedding · Butterfly Cream",pkg:"Standard",designKey:"w13"},
+w14:{tpl:"wed-red",style:"background:linear-gradient(165deg,#831f26,#5e0f17);position:relative;",body:`<div style="position:absolute;inset:0;background:linear-gradient(165deg,#831f26,#5e0f17);border-radius:inherit;"></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;"><div class="inv-eye" style="font-family:'Great Vibes',cursive;font-size:24px;color:#f0d590;">You are invited</div><div style="display:flex;gap:10px;margin:12px 0;"><svg width="22" height="20" viewBox="0 0 46 40" fill="none" stroke="#f0d590" stroke-width="2"><circle cx="17" cy="23" r="9"/><circle cx="29" cy="23" r="9"/></svg><svg width="18" height="20" viewBox="0 0 34 40" fill="none" stroke="#f0d590" stroke-width="2"><path d="M17 33C9 26 5 21 5 15a6 6 0 0111-3 6 6 0 0111 3c0 6-4 11-10 18z"/></svg><svg width="18" height="20" viewBox="0 0 34 40" fill="none" stroke="#f0d590" stroke-width="2"><path d="M17 34c0-8-6-12-6-18a6 6 0 0112 0c0 6-6 10-6 18z"/></svg></div><div class="inv-big" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:#f3e3dc;">Lwendo &amp; Mutale</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.16em;color:#e0c2bb;margin-top:8px;">ARE GETTING MARRIED &#183; 5 JULY 2025</div></div>`,name:"Wedding · Romantic Red",type:"Wedding · Romantic Red",pkg:"Standard",designKey:"w14"},
+w15:{tpl:"wed-sage",style:"background:#DFE4D6;position:relative;",body:`<div style="position:absolute;inset:0;background:#DFE4D6;border-radius:inherit;overflow:hidden;"><svg style="position:absolute;width:46px;height:46px;top:8px;left:8px;" viewBox="0 0 74 74" fill="none" stroke="#7a8a55" stroke-width="1.6"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="#7a8a55" stroke="none"/><circle cx="40" cy="22" r="3" fill="#7a8a55" stroke="none"/><circle cx="28" cy="36" r="3" fill="#7a8a55" stroke="none"/></svg><svg style="position:absolute;width:46px;height:46px;bottom:8px;right:8px;transform:rotate(180deg);" viewBox="0 0 74 74" fill="none" stroke="#7a8a55" stroke-width="1.6"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="#7a8a55" stroke="none"/><circle cx="40" cy="22" r="3" fill="#7a8a55" stroke="none"/><circle cx="28" cy="36" r="3" fill="#7a8a55" stroke="none"/></svg></div><div style="position:relative;z-index:1;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;"><div class="inv-eye" style="font-family:'Cinzel',serif;font-size:6px;letter-spacing:.28em;color:#46552f;">YOU ARE INVITED</div><div class="inv-big" style="font-family:'Great Vibes',cursive;font-size:22px;color:#3c4a2c;margin:4px 0;">Chembe &amp; Naomi</div><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:9px;color:#5a6a45;">are getting married</div><div class="inv-when" style="font-family:'Cinzel',serif;font-size:5.5px;letter-spacing:.2em;color:#5a6a45;margin-top:8px;">9 AUGUST 2025</div></div>`,name:"Wedding · Sage",type:"Wedding · Sage",pkg:"Standard",designKey:"w15"},
 
 
 
@@ -1677,9 +1529,9 @@ w1:'linear-gradient(145deg,#1c1814,#0d0b08)',w2:'linear-gradient(145deg,#f7ede0,
 w3:'linear-gradient(145deg,#0a1628,#162844)',w4:'linear-gradient(145deg,#faf7f2,#f0e8d8)',
 w5:'linear-gradient(145deg,#0f2b1a,#1a4428)',w6:'linear-gradient(145deg,#f5e6e0,#ead5c8)',
 w7:'linear-gradient(145deg,#3c2a1e,#5a3e2a)',w8:'linear-gradient(145deg,#2e1f4a,#3d2860)',
-w9:'linear-gradient(145deg,#f8f8f6,#eeede8)',w10:'linear-gradient(145deg,#8b3a1e,#c4602a)',
-b1:'linear-gradient(160deg,#F4EFE6,#EDE4D3)',b2:'linear-gradient(160deg,#7d1f25,#6a1820)',
-b3:'linear-gradient(160deg,#E9ECE3,#DDE2D2)',t1:'linear-gradient(145deg,#d4e0d0,#b8d0b0)',
+w9:'linear-gradient(145deg,#f8f8f6,#eeede8)',w10:'linear-gradient(145deg,#8b3a1e,#c4602a)',w11:'linear-gradient(135deg,#3a342c,#1a1714)',w12:'linear-gradient(135deg,#33424c,#16212a)',
+w13:'linear-gradient(160deg,#F4EFE6,#EDE4D3)',w14:'linear-gradient(160deg,#7d1f25,#6a1820)',
+w15:'linear-gradient(160deg,#E9ECE3,#DDE2D2)',t1:'linear-gradient(145deg,#d4e0d0,#b8d0b0)',
 t2:'linear-gradient(145deg,#4a2010,#7a3818)',s1:'linear-gradient(145deg,#f7ede0,#e8d4b8)',
 s2:'linear-gradient(145deg,#f8f6f3,#eeebe4)',s3:'linear-gradient(145deg,#1c1814,#0d0b08)'
 };
@@ -2658,7 +2510,7 @@ let html='';
 const prices={Basic:300,Standard:450,Gold:650,Custom:900};
 if(s.id==='pkg'){
 html=`<div class="bk-step-title">${s.title}</div><div class="bk-step-sub">${s.sub}</div>
-<div class="pkg-cards">${[{k:'Basic',p:'K300',d:'Basic designs, RSVP dashboard'},{k:'Standard',p:'K450',d:'Full designs, photos, location & map'},{k:'Gold',p:'K650',d:'Music, analytics, custom WhatsApp'},{k:'Custom',p:'K900',d:'Bespoke, priority delivery'}].map(p=>`<div class="pkg-card${bkState.pkg===p.k?' selected':''}" onclick="bkSelectPkg('${p.k}')"><div class="pkg-card-name">${p.k}</div><div class="pkg-card-price">${p.p}</div><div class="pkg-card-desc">${p.d}</div></div>`).join('')}</div>
+<div class="pkg-cards">${[{k:'Basic',p:'K300',d:'Basic designs, RSVP dashboard'},{k:'Standard',p:'K450',d:'Full designs, photos, location & map'},{k:'Gold',p:'K650',d:'Music, analytics, custom WhatsApp'},{k:'Custom',p:'K900',d:'Bespoke, priority delivery',soon:true}].map(p=>`<div class="pkg-card${bkState.pkg===p.k?' selected':''}${p.soon?' pkg-soon':''}" onclick="bkSelectPkg('${p.k}')"><div class="pkg-card-name">${p.k}${p.soon?' &#183; Coming soon':''}</div><div class="pkg-card-price">${p.p}</div><div class="pkg-card-desc">${p.d}</div></div>`).join('')}</div>
 <div class="bk-nav"><button class="bk-btn-next" id="bkNext" onclick="bkNext()" ${!bkState.pkg?'disabled':''}>Continue &#x2192;</button></div>`;
 } else if(s.id==='design'){
 const allDKeys=getPkgDesigns(bkState.pkg);
@@ -2680,7 +2532,7 @@ ${showPhoto?`<div class="form-row full"><div class="form-field"><label class="fo
 html=`<div class="bk-step-title">${s.title}</div><div class="bk-step-sub">${s.sub}</div>
 <div class="form-row full"><div class="form-field"><label class="form-label">Your WhatsApp number *</label><input class="form-input" id="bk_phone" type="tel" placeholder="e.g. 0977 123 456" oninput="bkState.phone=this.value"></div></div>
 <div class="form-row"><div class="form-field"><label class="form-label">RSVP Deadline <span style="font-weight:300;opacity:.5;">(optional)</span></label><input class="form-input" id="bk_deadline" type="date" oninput="bkState.deadline=this.value"></div></div>
-<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:var(--ink3);">We'll send payment details and confirm your order via WhatsApp within 24 hours.</div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:var(--ink3);">We'll send payment details and confirm your order via WhatsApp within 5 minutes.</div>
 <div class="bk-nav"><button class="bk-btn-back" onclick="bkBack()">&#x2190; Back</button><button class="bk-btn-next" onclick="bkValidateContact()">Review order &#x2192;</button></div>`;
 } else if(s.id==='summary'){
 const price=prices[bkState.pkg]||0;
@@ -2702,7 +2554,7 @@ const _rules=getPkgRules(bkState.pkg);
 if(BK_STEPS[bkState.step].id==='details'&&_rules.photoUpload){uploadedPhotos=[];initPhotoUpload('photoUploadContainer',_rules.photoMaxMB);}
 if(typeof window.attachCursorHover==='function')window.attachCursorHover();
 }
-function bkSelectPkg(k){bkState.pkg=k;$$('.pkg-card').forEach(c=>c.classList.toggle('selected',c.querySelector('.pkg-card-name')&&c.querySelector('.pkg-card-name').textContent===k));const n=$('bkNext');if(n)n.removeAttribute('disabled');}
+function bkSelectPkg(k){if(k==='Custom'){showToast('The Custom package is coming soon','',3500);return;}bkState.pkg=k;$$('.pkg-card').forEach(c=>c.classList.toggle('selected',c.querySelector('.pkg-card-name')&&c.querySelector('.pkg-card-name').textContent===k));const n=$('bkNext');if(n)n.removeAttribute('disabled');}
 function bkSelectDesign(k){bkState.design=k;$$('.design-card').forEach(c=>c.classList.toggle('selected',(c.getAttribute('onclick')||'').includes(`'${k}'`)));const n=$('bkNext');if(n)n.removeAttribute('disabled');}
 function bkFilterDesigns(el,cat){
 $$('.design-cat-tab').forEach(t=>t.classList.remove('active'));
@@ -5312,7 +5164,7 @@ if(taps>=5){taps=0;if(typeof runAwatuDiagnostic==='function')runAwatuDiagnostic(
       <div class="about-logo-big">Awatu<span>.</span></div>
       <div class="about-tagline">Digital Invitations &middot; Lusaka, Zambia</div>
       <div class="about-brand-body">
-        <strong>Awatu.</strong> is a digital invitation studio crafting beautiful, personalised invitations for weddings, corporate events, and every moment worth celebrating.<br><br>
+        <strong>Awatu.</strong> is a digital invitation studio crafting beautiful, personalised wedding invitations for your big day.<br><br>
         We combine thoughtful design with technology &mdash; making it effortless for our clients to share their most important moments with elegance. From concept to delivery, every invitation is handled with care.<br><br>
         Awatu is a proud subdivision of the <strong>Edge Group of Companies</strong>, a Lusaka-based portfolio of businesses committed to creative excellence, professional services, and digital innovation across Zambia.
       </div>
@@ -6080,7 +5932,7 @@ function S_story(n,title,cls,scr){
 }
 function ph(n,i){const u=n.photos[i];return '<div class="wt-ph"'+(u?(' style="background-image:url(\''+u.replace(/'/g,"%27")+'\')"'):'')+'></div>';}
 function S_gallery(n,cls,inner){
-  const g=inner||('<div class="wt-gal">'+'<div class="wt-ph wide"'+(n.photos[0]?(' style="background-image:url(\''+n.photos[0].replace(/'/g,"%27")+'\')"'):'')+'></div>'+ph(n,1)+ph(n,2)+'</div>');
+  const _gn=Math.max(3,(n.photos&&n.photos.length)||0);let _gw='<div class="wt-ph wide"'+(n.photos[0]?(' style="background-image:url(\''+String(n.photos[0]).replace(/'/g,"%27")+'\')"'):'')+'></div>';for(var _gi=1;_gi<_gn;_gi++){_gw+=ph(n,_gi);}const g=inner||('<div class="wt-gal">'+_gw+'</div>');
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center"><div class="wt-kick">A glimpse</div><div class="wt-title">Of us</div>'+fl(DOT)+g+'</section>';
 }
 function S_details(n,cls,extra){
@@ -6214,9 +6066,9 @@ function _v2(bg,panel,tx,txs,mut,ac,acs){return {bg:bg,panel:panel,panel2:panel,
 function mkBold(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:BOLDCSS,seal:bInvSeal,hero:boldHero};}
 function mkPhoto(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:PHOTOCSS,seal:bInvSeal,hero:photoHero};}
 function mkFrame(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:FRAMECSS,seal:bInvSeal,hero:framedHero};}
-T['binv-1']=mkBold(_v2('#F4EFE6','#EDE4D3','#5a2a2a','#7a5a4a','#9a8a78','#9c7a3c','#c2a05a'));
-T['binv-2']=mkPhoto(_v2('#7d1f25','#6a1820','#3a1014','#e0c2bb','#c89a93','#e8c87a','#f0d89a'));
-T['binv-3']=mkFrame(_v2('#E9ECE3','#DDE2D2','#2e3a25','#4a5a3a','#6a7a5a','#4a5a3a','#6a7a4a'));
+T['wed-bf']=mkBold(_v2('#F4EFE6','#EDE4D3','#5a2a2a','#7a5a4a','#9a8a78','#9c7a3c','#c2a05a'));
+T['wed-red']=mkPhoto(_v2('#7d1f25','#6a1820','#3a1014','#e0c2bb','#c89a93','#e8c87a','#f0d89a'));
+T['wed-sage']=mkFrame(_v2('#E9ECE3','#DDE2D2','#2e3a25','#4a5a3a','#6a7a5a','#4a5a3a','#6a7a4a'));
 T['binv-4']=mkBold(_v2('#F7EDED','#F0DEDE','#5a2030','#7a3040','#a06070','#7a2e3a','#a04a58'));
 T['binv-5']=mkPhoto(_v2('#F4F1EA','#EAE6DC','#1d1d1a','#4a4a45','#7a7a72','#2a2a26','#7a7060'));
 T['binv-6']=mkFrame(_v2('#F5ECE4','#EFE1D5','#4a3a30','#6a5446','#9a8472','#b08968','#cba382'));
@@ -6228,24 +6080,34 @@ T['binv-10']=mkBold(_v2('#F8EDE3','#F2DDCC','#6a3a25','#8a5438','#b08468','#b566
 /* ===== Inspo-matched looks: Butterfly Cream, Romantic Red, Sage ===== */
 const _BF='<svg class="bf-svg" width="104" height="88" viewBox="0 0 110 92" fill="none"><g stroke="var(--ac)" stroke-width="1.3"><path d="M55 20 C40 0 8 4 12 30 C8 54 38 56 55 40" fill="var(--panel)"/><path d="M55 20 C70 0 102 4 98 30 C102 54 72 56 55 40" fill="var(--panel)"/><path d="M55 42 C44 56 22 60 26 78 C30 92 52 84 55 66" fill="var(--panel)"/><path d="M55 42 C66 56 88 60 84 78 C80 92 58 84 55 66" fill="var(--panel)"/><line x1="55" y1="16" x2="55" y2="70"/><path d="M55 16 C50 6 46 4 44 2 M55 16 C60 6 64 4 66 2"/></g></svg>';
 const _RDROW='<svg width="32" height="38" viewBox="0 0 34 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><rect x="6" y="16" width="22" height="20" rx="1"/><path d="M3 16h28v6H3z"/><path d="M17 16v20"/><path d="M17 16c-6-2-10-8-6-11 3-2 6 4 6 11zM17 16c6-2 10-8 6-11-3-2-6 4-6 11z"/></svg><svg width="32" height="38" viewBox="0 0 34 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><path d="M8 22h18v12H8z"/><path d="M8 22c0-4 4-5 9-5s9 1 9 5"/><path d="M17 8v8"/><circle cx="17" cy="6" r="2"/></svg><svg width="32" height="38" viewBox="0 0 34 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><path d="M17 34c0-8-6-12-6-18a6 6 0 0112 0c0 6-6 10-6 18z"/><path d="M11 16c-4 0-7 2-7 6M23 16c4 0 7 2 7 6"/></svg>';
+const _RDROWW='<svg width="42" height="38" viewBox="0 0 46 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><circle cx="17" cy="23" r="9"/><circle cx="29" cy="23" r="9"/><path d="M14 10l3 4 3-4z"/></svg><svg width="32" height="38" viewBox="0 0 34 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><path d="M17 33C9 26 5 21 5 15a6 6 0 0111-3 6 6 0 0111 3c0 6-4 11-10 18z"/></svg><svg width="32" height="38" viewBox="0 0 34 40" fill="none" stroke="var(--ac)" stroke-width="1.4"><path d="M17 34c0-8-6-12-6-18a6 6 0 0112 0c0 6-6 10-6 18z"/><path d="M11 16c-4 0-7 2-7 6M23 16c4 0 7 2 7 6"/></svg>';
 const _FLTL='<svg class="sg-cn tl" viewBox="0 0 74 74" fill="none" stroke="var(--acs)" stroke-width="1.2"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="var(--acs)" stroke="none"/><circle cx="40" cy="22" r="3" fill="var(--acs)" stroke="none"/><circle cx="28" cy="36" r="3" fill="var(--acs)" stroke="none"/><path d="M44 20 C40 14 34 14 32 20"/></svg>';
 const _FLBR='<svg class="sg-cn br" viewBox="0 0 74 74" fill="none" stroke="var(--acs)" stroke-width="1.2"><path d="M4 70 C4 40 24 20 54 16"/><circle cx="54" cy="14" r="4" fill="var(--acs)" stroke="none"/><circle cx="40" cy="22" r="3" fill="var(--acs)" stroke="none"/><circle cx="28" cy="36" r="3" fill="var(--acs)" stroke="none"/><path d="M44 20 C40 14 34 14 32 20"/></svg>';
-const butterflyHero=n=>'<header class="wt-hero binv-bf">'+_BF+'<div class="bf-fill"></div><div class="wt-hero-in"><span class="bf-you">you&#39;re</span><div class="bf-cd">CORDIALLY INVITED</div><div class="bf-name">'+esc(n.names)+'</div><div class="bf-date">'+esc(n.dateStr)+'</div>'+(n.tagline?'<div class="bf-tag">&ldquo;'+esc(n.tagline)+'&rdquo;</div>':'')+'</div><div class="wt-cue">Scroll &#10022;</div></header>';
-const redHero=n=>'<header class="wt-hero binv-red"><div class="wt-hero-in"><div class="rd-ttl">These are for you</div><div class="rd-row">'+_RDROW+'</div><div class="rd-name">Happy Birthday, '+esc(n.a||n.names)+'</div><div class="rd-date">'+esc(n.dateStr)+'</div>'+(n.tagline?'<div class="rd-tag">&ldquo;'+esc(n.tagline)+'&rdquo;</div>':'')+'</div><div class="wt-cue">Scroll &#10022;</div></header>';
-const sageHero=n=>'<header class="wt-hero binv-sage">'+_FLTL+_FLBR+'<div class="wt-hero-in"><span class="sg-eye">You are invited</span><div class="sg-name">'+esc(n.names)+'</div><div class="sg-orn">&#10086;</div><div class="sg-sub">join us to celebrate</div><div class="sg-date">'+esc(n.dateStr)+'</div></div><div class="wt-cue">Scroll &#10022;</div></header>';
+const butterflyHero=n=>'<header class="wt-hero binv-bf">'+_BF+'<div class="bf-fill"></div><div class="wt-hero-in"><span class="bf-you">together with their families</span><div class="bf-cd">AT THE MARRIAGE OF</div><div class="bf-name">'+esc(n.names)+'</div><div class="bf-date">'+esc(n.dateStr)+'</div>'+(n.tagline?'<div class="bf-tag">&ldquo;'+esc(n.tagline)+'&rdquo;</div>':'')+'</div><div class="wt-cue">Scroll &#10022;</div></header>';
+const redHero=n=>'<header class="wt-hero binv-red"><div class="wt-hero-in"><div class="rd-ttl">You are invited</div><div class="rd-row">'+_RDROWW+'</div><div class="rd-name">'+esc(n.names)+'</div><div class="rd-date">are getting married &#183; '+esc(n.dateStr)+'</div>'+(n.tagline?'<div class="rd-tag">&ldquo;'+esc(n.tagline)+'&rdquo;</div>':'')+'</div><div class="wt-cue">Scroll &#10022;</div></header>';
+const sageHero=n=>'<header class="wt-hero binv-sage">'+_FLTL+_FLBR+'<div class="wt-hero-in"><span class="sg-eye">You are invited</span><div class="sg-name">'+esc(n.names)+'</div><div class="sg-orn">&#10086;</div><div class="sg-sub">are getting married</div><div class="sg-date">'+esc(n.dateStr)+'</div></div><div class="wt-cue">Scroll &#10022;</div></header>';
 const BFCSS=".theme-binv-bf .wt-hero.binv-bf{background:radial-gradient(120% 100% at 50% 0%,var(--bg),var(--panel));display:flex;flex-direction:column;align-items:center;text-align:center;min-height:100%;padding:40px 26px}.theme-binv-bf .bf-svg{margin-top:6px}.theme-binv-bf .bf-fill{flex:1;min-height:20px}.theme-binv-bf .bf-you{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--txs)}.theme-binv-bf .bf-cd{font-family:'Cinzel',serif;font-size:15px;letter-spacing:.18em;color:var(--tx);margin:6px 0}.theme-binv-bf .bf-name{font-family:'Great Vibes',cursive;font-size:42px;color:var(--ac);margin-top:6px}.theme-binv-bf .bf-date{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;color:var(--mut);margin-top:auto;padding-top:16px}.theme-binv-bf .bf-tag{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--mut);margin-top:8px}.theme-binv-bf .wt-seal{background:radial-gradient(120% 100% at 50% 0%,var(--bg),var(--panel))}"+" .wt-wax.binv-wax{background:radial-gradient(circle at 38% 32%,var(--acs),var(--ac) 60%)} .wt-wax.binv-wax .wt-mono{font-family:'Cinzel',serif;color:#fff;font-size:30px}".replace(/ \./g,' .theme-binv-bf .');
 const REDCSS=".theme-binv-red .wt-hero.binv-red{background:linear-gradient(165deg,var(--bg),var(--panel));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100%;padding:34px 24px}.theme-binv-red .rd-ttl{font-family:'Great Vibes',cursive;font-size:36px;color:var(--ac);line-height:1}.theme-binv-red .rd-row{display:flex;gap:18px;margin:22px 0}.theme-binv-red .rd-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:var(--tx)}.theme-binv-red .rd-date{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;color:var(--txs);margin-top:12px}.theme-binv-red .rd-tag{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--txs);margin-top:8px}.theme-binv-red .wt-seal{background:linear-gradient(165deg,var(--bg),var(--panel))}"+" .wt-wax.binv-wax{background:radial-gradient(circle at 38% 32%,var(--acs),var(--ac) 60%)} .wt-wax.binv-wax .wt-mono{font-family:'Cinzel',serif;color:#5e0f17;font-size:30px}".replace(/ \./g,' .theme-binv-red .');
 const SAGECSS=".theme-binv-sage .wt-hero.binv-sage{position:relative;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100%;padding:34px 26px}.theme-binv-sage .sg-cn{position:absolute;width:78px;height:78px;opacity:.9}.theme-binv-sage .sg-cn.tl{top:10px;left:10px}.theme-binv-sage .sg-cn.br{bottom:10px;right:10px;transform:rotate(180deg)}.theme-binv-sage .sg-eye{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ac)}.theme-binv-sage .sg-name{font-family:'Great Vibes',cursive;font-size:42px;color:var(--tx);margin:10px 0 4px}.theme-binv-sage .sg-orn{font-size:13px;color:var(--ac);opacity:.7;margin:2px 0 6px}.theme-binv-sage .sg-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--txs)}.theme-binv-sage .sg-date{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--txs);margin-top:10px}.theme-binv-sage .wt-seal{background:var(--panel)}"+" .wt-wax.binv-wax{background:radial-gradient(circle at 38% 32%,var(--acs),var(--ac) 60%)} .wt-wax.binv-wax .wt-mono{font-family:'Cinzel',serif;color:#fff;font-size:30px}".replace(/ \./g,' .theme-binv-sage .');
 function mkBf(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:BFCSS,seal:bInvSeal,hero:butterflyHero};}
 function mkRed(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:REDCSS,seal:bInvSeal,hero:redHero};}
 function mkSage(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:SAGECSS,seal:bInvSeal,hero:sageHero};}
-T['binv-1']=mkBf(_v2('#F7F3EC','#EFE7D8','#5a2a2a','#7a5a4a','#9a8a78','#9c7a3c','#c2a05a'));
-T['binv-2']=mkRed(_v2('#831f26','#5e0f17','#f3e3dc','#e0c2bb','#c89a93','#f0d590','#f5e2a8'));
-T['binv-3']=mkSage(_v2('#DFE4D6','#D2DAC4','#3c4a2c','#5a6a45','#7a8a65','#46552f','#7a8a55'));
+T['wed-bf']=mkBf(_v2('#F7F3EC','#EFE7D8','#5a2a2a','#7a5a4a','#9a8a78','#9c7a3c','#c2a05a'));
+T['wed-red']=mkRed(_v2('#831f26','#5e0f17','#f3e3dc','#e0c2bb','#c89a93','#f0d590','#f5e2a8'));
+T['wed-sage']=mkSage(_v2('#DFE4D6','#D2DAC4','#3c4a2c','#5a6a45','#7a8a65','#46552f','#7a8a55'));
 T['binv-4']=mkBf(_v2('#F7EDED','#F0DEDE','#5a2030','#7a3040','#a06070','#7a2e3a','#a04a58'));
 T['binv-5']=mkRed(_v2('#6a1f2a','#4a141c','#ecd6cf','#d8b0a4','#b88a82','#f0d590','#f5e2a8'));
 T['binv-6']=mkSage(_v2('#E7E4D6','#DBD7C4','#4a4632','#6a6448','#8a8468','#7a6a3a','#a08a4a'));
 
+
+
+/* ===== Photo-background hero (clients add their own landing photo) ===== */
+const photoBgHero=n=>{var p=(n.photos&&n.photos[0])?String(n.photos[0]).replace(/'/g,"%27"):'';return '<header class="wt-hero wt-pbg"'+(p?' style="background-image:url(\''+p+'\')"':'')+'><div class="pbg-scrim"></div><div class="wt-hero-in pbg-in">'+(p?'':'<div class="pbg-hint">&#128247; add your photo</div>')+'<span class="pbg-eye">'+esc(n.eyebrow)+'</span><div class="pbg-names">'+esc(n.a)+'<span class="pbg-amp">&amp;</span>'+esc(n.b)+'</div><div class="pbg-sub">are getting married</div><div class="pbg-date">'+esc(n.dateStr)+'</div></div><div class="wt-cue">Scroll &#10022;</div></header>';};
+const pbgSeal=n=>'<div class="wt-seal" data-open><div class="wt-seal-in"><div class="wt-wax pbg-wax"><span class="wt-mono">'+esc(((n.a&&n.a[0])||'')+((n.b&&n.b[0])||''))+'</span></div><div class="wt-cap">You are invited</div><div class="wt-tap">click the seal to open</div></div><button class="wt-openbtn" data-open></button></div>';
+const PBGCSS=".theme-pbg .wt-hero.wt-pbg{position:relative;min-height:100%;background-size:cover;background-position:center;background-color:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 28px}.theme-pbg .pbg-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.58))}.theme-pbg .wt-hero-in.pbg-in{position:relative;z-index:1}.theme-pbg .pbg-hint{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:14px}.theme-pbg .pbg-eye{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.85)}.theme-pbg .pbg-names{font-family:'Playfair Display',serif;font-weight:700;font-size:40px;line-height:1.05;color:#fff;margin:12px 0 6px;text-shadow:0 2px 18px rgba(0,0,0,.4)}.theme-pbg .pbg-amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;margin:0 6px;opacity:.85}.theme-pbg .pbg-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:rgba(255,255,255,.9)}.theme-pbg .pbg-date{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85);margin-top:10px}.theme-pbg .wt-seal{background:#161412}.theme-pbg .wt-wax.pbg-wax{background:radial-gradient(circle at 38% 32%,var(--acs),var(--ac) 60%)}.theme-pbg .wt-wax.pbg-wax .wt-mono{font-family:'Cinzel',serif;color:#fff;font-size:26px}";
+function mkPbg(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,extra:PBGCSS,seal:pbgSeal,hero:photoBgHero};}
+T['photo-bg-1']=mkPbg(_v2('#2a2520','#1a1714','#ffffff','#eeeeee','#cccccc','#C2A24B','#dcc07e'));
+T['photo-bg-2']=mkPbg(_v2('#23303a','#16212a','#ffffff','#eeeeee','#cccccc','#9fb8c4','#c4d6de'));
 
 
 /* theme -> body section flow (alt classes give the alternating panels) */
@@ -6339,13 +6201,13 @@ function baseCSS(f){return (
 "@media(prefers-reduced-motion:reduce){.wtpl *{animation:none!important}}"
 );}
 
-const CLS={'bright-luxury':'theme-bright','moody-bloom':'theme-moody','bordeaux-letter':'theme-bordeaux','heritage-emboss':'theme-heritage','olive-mail':'theme-olive','calla-noir':'theme-calla','sage-classic':'theme-sage','ivory-heirloom':'theme-ivory','garden-watercolor':'theme-garden','emerald-gold':'theme-emerald','bday-balloon-1':'theme-bday-balloon','bday-balloon-2':'theme-bday-balloon','bday-balloon-3':'theme-bday-balloon','bday-balloon-4':'theme-bday-balloon','bday-balloon-5':'theme-bday-balloon','bday-sprinkle-1':'theme-bday-sprinkle','bday-sprinkle-2':'theme-bday-sprinkle','bday-sprinkle-3':'theme-bday-sprinkle','bday-sprinkle-4':'theme-bday-sprinkle','bday-sprinkle-5':'theme-bday-sprinkle','binv-1':'theme-binv-bf','binv-2':'theme-binv-red','binv-3':'theme-binv-sage','binv-4':'theme-binv-bf','binv-5':'theme-binv-red','binv-6':'theme-binv-sage','binv-7':'theme-binv-bold','binv-8':'theme-binv-photo','binv-9':'theme-binv-frame','binv-10':'theme-binv-bold'};
+const CLS={'bright-luxury':'theme-bright','moody-bloom':'theme-moody','bordeaux-letter':'theme-bordeaux','heritage-emboss':'theme-heritage','olive-mail':'theme-olive','calla-noir':'theme-calla','sage-classic':'theme-sage','ivory-heirloom':'theme-ivory','garden-watercolor':'theme-garden','emerald-gold':'theme-emerald','bday-balloon-1':'theme-bday-balloon','bday-balloon-2':'theme-bday-balloon','bday-balloon-3':'theme-bday-balloon','bday-balloon-4':'theme-bday-balloon','bday-balloon-5':'theme-bday-balloon','bday-sprinkle-1':'theme-bday-sprinkle','bday-sprinkle-2':'theme-bday-sprinkle','bday-sprinkle-3':'theme-bday-sprinkle','bday-sprinkle-4':'theme-bday-sprinkle','bday-sprinkle-5':'theme-bday-sprinkle','wed-bf':'theme-binv-bf','wed-red':'theme-binv-red','wed-sage':'theme-binv-sage','binv-4':'theme-binv-bf','binv-5':'theme-binv-red','binv-6':'theme-binv-sage','binv-7':'theme-binv-bold','binv-8':'theme-binv-photo','binv-9':'theme-binv-frame','binv-10':'theme-binv-bold','photo-bg-1':'theme-pbg','photo-bg-2':'theme-pbg'};
 
 function varStyle(v){return Object.keys(v).map(k=>'--'+k+':'+v[k]).join(';');}
 
 window.WTPL={
  themes:Object.keys(T),
- labels:{'bright-luxury':'Bright Luxury','moody-bloom':'Moody Bloom','bordeaux-letter':'Bordeaux Letter','heritage-emboss':'Heritage Emboss','olive-mail':'Olive Mail','calla-noir':'Calla Noir','sage-classic':'Sage Classic','ivory-heirloom':'Ivory Heirloom','garden-watercolor':'Garden Watercolor','emerald-gold':'Emerald & Gold','bday-balloon-1':'Balloon Bash','bday-balloon-2':'Balloon Bash','bday-balloon-3':'Balloon Bash','bday-balloon-4':'Balloon Bash','bday-balloon-5':'Balloon Bash','bday-sprinkle-1':'Sprinkle Candy','bday-sprinkle-2':'Sprinkle Candy','bday-sprinkle-3':'Sprinkle Candy','bday-sprinkle-4':'Sprinkle Candy','bday-sprinkle-5':'Sprinkle Candy','binv-1':'Birthday Invitation','binv-2':'Birthday Invitation','binv-3':'Birthday Invitation','binv-4':'Birthday Invitation','binv-5':'Birthday Invitation','binv-6':'Birthday Invitation','binv-7':'Birthday Invitation','binv-8':'Birthday Invitation','binv-9':'Birthday Invitation','binv-10':'Birthday Invitation'},
+ labels:{'bright-luxury':'Bright Luxury','moody-bloom':'Moody Bloom','bordeaux-letter':'Bordeaux Letter','heritage-emboss':'Heritage Emboss','olive-mail':'Olive Mail','calla-noir':'Calla Noir','sage-classic':'Sage Classic','ivory-heirloom':'Ivory Heirloom','garden-watercolor':'Garden Watercolor','emerald-gold':'Emerald & Gold','bday-balloon-1':'Balloon Bash','bday-balloon-2':'Balloon Bash','bday-balloon-3':'Balloon Bash','bday-balloon-4':'Balloon Bash','bday-balloon-5':'Balloon Bash','bday-sprinkle-1':'Sprinkle Candy','bday-sprinkle-2':'Sprinkle Candy','bday-sprinkle-3':'Sprinkle Candy','bday-sprinkle-4':'Sprinkle Candy','bday-sprinkle-5':'Sprinkle Candy','wed-bf':'Birthday Invitation','wed-red':'Birthday Invitation','wed-sage':'Birthday Invitation','binv-4':'Birthday Invitation','binv-5':'Birthday Invitation','binv-6':'Birthday Invitation','binv-7':'Birthday Invitation','binv-8':'Birthday Invitation','binv-9':'Birthday Invitation','binv-10':'Birthday Invitation','photo-bg-1':'Photo Background','photo-bg-2':'Photo Background'},
  norm:norm,
  css:function(key){const th=T[key]||T['bright-luxury'];return baseCSS(th.fonts)+(th.extra||'');},
  render:function(key,data,opts){
