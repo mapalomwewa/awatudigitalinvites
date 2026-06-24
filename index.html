@@ -2803,7 +2803,7 @@ const wrap=document.getElementById('gvWrap');
 if(!gv)return;
 gv.classList.add('open');
 window._gvPreview=!!(inviteId&&String(inviteId).indexOf('preview-')===0);
-var _bb=document.getElementById('gvBackBtn');if(_bb)_bb.innerHTML=window._gvPreview?'&#x2190; Back to editing':'&#x2190; Back';
+var _bb=document.getElementById('gvBackBtn');if(_bb){_bb.innerHTML=window._gvPreview?'&#x2190; Back to editing':'&#x2190; Back';document.body.appendChild(_bb);_bb.style.zIndex='2147483640';_bb.style.display='inline-flex';_bb.style.visibility='visible';_bb.style.opacity='1';}
 document.body.style.overflow='hidden';
 if(loading)loading.style.display='flex';
 if(wrap)wrap.style.display='none';
@@ -3483,6 +3483,7 @@ const gv=document.getElementById('guestView');
 if(gv)gv.classList.remove('open');
 document.body.style.overflow='';
 history.pushState('',document.title,window.location.pathname+window.location.search);
+var _bb=document.getElementById('gvBackBtn');if(_bb)_bb.style.display='none';
 }
 function gvBack(){closeGuestView();if(window._gvPreview){var mb=document.getElementById('modalBg');if(mb&&!mb.classList.contains('open'))mb.classList.add('open');window._gvPreview=false;}}
 function addToCalendar(type){
