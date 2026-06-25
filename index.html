@@ -5498,7 +5498,7 @@ function S_story(n,title,cls,scr){
 }
 function ph(n,i){const u=n.photos[i];return '<div class="wt-ph"'+(u?(' style="background-image:url(\''+u.replace(/'/g,"%27")+'\')"'):'')+'></div>';}
 function S_gallery(n,cls,inner){
-  const _gn=((n.photos&&n.photos.length)||3);let _gw='<div class="wt-ph wide"'+(n.photos[0]?(' style="background-image:url(\''+String(n.photos[0]).replace(/'/g,"%27")+'\')"'):'')+'></div>';for(var _gi=1;_gi<_gn;_gi++){_gw+=ph(n,_gi);}const g=inner||('<div class="wt-gal">'+_gw+'</div>');
+  var _ps=(n.photos||[]);var _pn=_ps.length;function _pd(ix,w){var u=_ps[ix];return '<div class="wt-ph'+(w?' wide':'')+'"'+(u?(' style="background-image:url(\''+String(u).replace(/'/g,"%27")+'\')"'):'')+'></div>';}var _gw='';if(_pn<=1){_gw=_pd(0,true);}else if(_pn===2){_gw=_pd(0,true)+_pd(1,true);}else{var _st=0;if(_pn%2===1){_gw+=_pd(0,true);_st=1;}for(var _gi=_st;_gi<_pn;_gi++){_gw+=_pd(_gi,false);}}const g=inner||('<div class="wt-gal">'+_gw+'</div>');
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center"><div class="wt-kick">A glimpse</div><div class="wt-title">Of us</div>'+fl(DOT)+g+'</section>';
 }
 function S_details(n,cls,extra){
