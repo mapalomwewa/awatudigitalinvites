@@ -3043,6 +3043,7 @@ function wtMountGuest(data,tpl){
  host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:1000000;display:block;background:#0a0806';window._wtMounted=true;['gvWrap','gvSeal','gvLoading'].forEach(function(_id){var _e=document.getElementById(_id);if(_e)_e.style.display='none';});
  host.innerHTML=r.html;window._gvInviteData=data;
  WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{wtOpen(wtCalUrl(data));}catch(e){}},onMap:function(){try{wtOpen(wtMapUrl(data));}catch(e){}}});
+ try{if(data&&data.id&&String(data.id).indexOf('preview')!==0){var _rk='awatu_rsvp_'+data.id;var _pv=null;try{_pv=localStorage.getItem(_rk);}catch(_le){}if(_pv){var _qb=host.querySelector('[data-rsvp-send]');var _qsec=_qb&&_qb.closest?_qb.closest('.wt-sec'):null;if(_qsec){_qsec.innerHTML='<span class="wt-eye">Thank you</span><div class="wt-title" style="margin-top:8px">Already responded</div><p class="wt-note">You have already sent your RSVP for this invitation'+(_pv==='accepted'?', and we have you down as attending.':(_pv==='declined'?'. We have noted you cannot make it.':'.'))+'</p>';}}}}catch(_e){}
  window._wtMusicStarted=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);},{once:true});});}
  var loading=document.getElementById('gvLoading');if(loading)loading.style.display='none';
  return true;}
