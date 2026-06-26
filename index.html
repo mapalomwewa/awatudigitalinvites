@@ -2894,7 +2894,7 @@ function wtData(){var f=customFields;return {tpl:f.tpl||(invites[activeDesignKey
  names:(f.partner_a||'')+(f.partner_b?(' & '+f.partner_b):''),partner_a:f.partner_a||'',partner_b:f.partner_b||'',
  eyebrow:f.eyebrow||'You are invited',tagline:f.tagline||'',date:f.date||'',start_time:f.startTime||f.start_time||'',end_time:f.endTime||f.end_time||'',
  venue:f.venue||'',location:f.location||'',map_url:f.mapUrl||'',story:f.story||[],photos:f.photos||[],bg_music:f.bgMusic||'',deadline:f.deadline||'',invite_message:f.inviteMessage||''};}
-function wtRenderPreview(){if(!window.WTPL)return;var host=document.getElementById('wtPreviewHost');if(!host)return;var d=wtData();var r=WTPL.render(d.tpl,d);host.innerHTML=r.html;WTPL.wire(host,r.n,{onMap:function(){try{window.open(wtMapUrl(wtData()),'_blank','noopener');}catch(e){}},onCal:function(){try{window.open(wtCalUrl(wtData()),'_blank','noopener');}catch(e){}}});}
+function wtRenderPreview(){if(!window.WTPL)return;var host=document.getElementById('wtPreviewHost');if(!host)return;var d=wtData();var r=WTPL.render(d.tpl,d);host.innerHTML=r.html;WTPL.wire(host,r.n,{onMap:function(){try{wtOpen(wtMapUrl(wtData()));}catch(e){}},onCal:function(){try{wtOpen(wtCalUrl(wtData()));}catch(e){}}});}
 function wtLive(key,val){customFields[key]=val;if(key==='partner_a'||key==='partner_b'){customFields.names=(customFields.partner_a||'')+(customFields.partner_b?(' & '+customFields.partner_b):'');}clearTimeout(wtPrevTimer);wtPrevTimer=setTimeout(wtRenderPreview,120);}
 function wtChaptersHTML(){var s=customFields.story||[];var h='';for(var i=0;i<s.length;i++){var c=s[i];
  h+='<div style="border:1px solid rgba(0,0,0,.08);padding:10px;border-radius:10px;margin-bottom:8px">'
@@ -2950,6 +2950,7 @@ function openWeddingCustomizer(type,inv){activeDesignKey=type;
  var ab=document.querySelector('[data-add-chapter]');if(ab)ab.addEventListener('click',wtAddChapter);
  wtBindChapters();wtRenderPreview();
  if(typeof window.attachCursorHover==='function')window.attachCursorHover();}
+function wtOpen(url){if(!url||url==='#')return;try{var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},150);}catch(e){try{window.open(url,'_blank');}catch(_){location.href=url;}}}
 function wtMapUrl(d){if(!d)return '#';if(d.map_url&&/^https?:/i.test(d.map_url))return d.map_url;var q=((d.venue||'')+' '+(d.location||d.place||'')).trim();if(!q)q='wedding venue';return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
 function wtCalUrl(d){d=d||{};var pad=function(x){return String(x).padStart(2,'0');};function fmt(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';}
  var title=encodeURIComponent((d.names||'Wedding')+' \u2014 Wedding');
@@ -2986,7 +2987,7 @@ function wtMountGuest(data,tpl){
  if(!host){host=document.createElement('div');host.id='wtplHost';if(gv)gv.appendChild(host);}
  host.style.cssText='position:fixed;inset:0;overflow:hidden;z-index:1000000;display:block;background:#0a0806';window._wtMounted=true;['gvWrap','gvSeal','gvLoading'].forEach(function(_id){var _e=document.getElementById(_id);if(_e)_e.style.display='none';});
  host.innerHTML=r.html;window._gvInviteData=data;
- WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{window.open(wtCalUrl(data),'_blank','noopener');}catch(e){}},onMap:function(){try{window.open(wtMapUrl(data),'_blank','noopener');}catch(e){}}});
+ WTPL.wire(host,r.n,{onRsvp:function(res){wtGuestRsvp(data,res);},onCal:function(){try{wtOpen(wtCalUrl(data));}catch(e){}},onMap:function(){try{wtOpen(wtMapUrl(data));}catch(e){}}});
  window._wtMusicStarted=false;if(data&&data.bg_music){host.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){wtPlayMusic(data.bg_music,host);},{once:true});});}
  var loading=document.getElementById('gvLoading');if(loading)loading.style.display='none';
  return true;}
