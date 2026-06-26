@@ -2358,7 +2358,7 @@ openGuestView('preview-'+Date.now(),enc);
 }catch(e){console.warn('Preview failed',e);showToast('Could not open preview','error');}
 }
 async function submitPaymentRef(){
-_dbg('=== SUBMIT BUTTON TAPPED (build G9) ===');
+_dbg('=== SUBMIT BUTTON TAPPED (build G10) ===');
 const ref=document.getElementById('payRefInput')?.value.trim();
 _dbg('--- SUBMIT START --- ref="'+(ref||'(empty)')+'"');
 if(!ref){showToast('Please enter your payment reference number');return;}
@@ -2869,7 +2869,7 @@ let dbData=null;
 let dbFresh=false;
 for(let attempt=0;attempt<2&&!dbData;attempt++){
 try{
-const {data:sbData}=await _sb.from('invites').select('*').eq('id',inviteId).maybeSingle();
+const {data:sbData}=await wtWithTimeout(_sb.from('invites').select('*').eq('id',inviteId).maybeSingle(),12000);
 if(sbData){dbData=sbData;dbFresh=true;}
 else break; // row genuinely absent — don't retry
 }catch(e){
@@ -2911,9 +2911,9 @@ if(loading)loading.innerHTML='<div style="text-align:center;padding:40px;"><div 
 return;
 }
 window._wtMounted=false;
-populateGuestView(data);
-if(window._wtMounted){if(loading)loading.style.display='none';}
-else{if(loading)loading.style.display='none';if(wrap)wrap.style.display='block';}
+try{populateGuestView(data);}catch(_pe){console.error('[Awatu] guest render error:',_pe);}
+if(loading)loading.style.display='none';
+if(!window._wtMounted){if(wrap)wrap.style.display='block';}
 if(data.bg_music){
 try{
 const existing=document.getElementById('gvBgAudio');
@@ -3004,7 +3004,7 @@ function openWeddingCustomizer(type,inv){activeDesignKey=type;
 function wtWithTimeout(p,ms){return Promise.race([Promise.resolve(p),new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},ms||20000);})]);}
 function _mapsGo(a){var u=a&&a.getAttribute('href')||'';try{_dbg('MAPS tapped (G9): '+(u||'(empty)'));}catch(e){}if(!u)return false;try{var w=window.open(u,'_blank');if(!w){location.href=u;}}catch(e){try{location.href=u;}catch(_){}}return false;}
 function _dbg(msg){try{var p=document.getElementById('_awatuDbg');if(!p){p=document.createElement('div');p.id='_awatuDbg';p.style.cssText='position:fixed;top:0;left:0;right:0;max-height:55vh;overflow:auto;z-index:2147483647;background:#0a0806;color:#8CFF6B;font-family:monospace;font-size:12px;line-height:1.5;padding:10px 40px 10px 12px;white-space:pre-wrap;box-shadow:0 4px 20px rgba(0,0,0,.5);';var x=document.createElement('span');x.textContent='close';x.style.cssText='position:fixed;top:8px;right:10px;color:#fff;cursor:pointer;font-weight:bold;background:#991b1b;padding:2px 8px;border-radius:6px;font-family:Inter,sans-serif;z-index:2147483647;';x.onclick=function(){p.remove();};p.appendChild(x);document.body.appendChild(p);}var line=document.createElement('div');line.textContent=msg;p.appendChild(line);p.scrollTop=p.scrollHeight;}catch(e){}}
-setTimeout(function(){try{if(!document.getElementById('_awatuBuild')){var b=document.createElement('div');b.id='_awatuBuild';b.textContent='Awatu build G9';b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:2147483647;background:rgba(16,185,129,.96);color:#fff;font:600 11px Inter,sans-serif;padding:3px 9px;border-radius:8px;letter-spacing:.3px;box-shadow:0 2px 8px rgba(0,0,0,.3);';document.body.appendChild(b);}}catch(e){}},800);
+setTimeout(function(){try{if(!document.getElementById('_awatuBuild')){var b=document.createElement('div');b.id='_awatuBuild';b.textContent='Awatu build G10';b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:2147483647;background:rgba(16,185,129,.96);color:#fff;font:600 11px Inter,sans-serif;padding:3px 9px;border-radius:8px;letter-spacing:.3px;box-shadow:0 2px 8px rgba(0,0,0,.3);';document.body.appendChild(b);}}catch(e){}},800);
 function wtOpen(url){if(!url||url==='#')return;try{var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},150);}catch(e){try{window.open(url,'_blank');}catch(_){location.href=url;}}}
 function wtMapUrl(d){if(!d)return '#';if(d.map_url&&/^https?:/i.test(d.map_url))return d.map_url;var q=((d.venue||'')+' '+(d.location||d.place||'')).trim();if(!q)q='wedding venue';return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
 function wtCalUrl(d){d=d||{};var pad=function(x){return String(x).padStart(2,'0');};function fmt(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';}
@@ -5828,7 +5828,7 @@ function baseCSS(f){return (
 ".wtpl .wt-chap{position:relative;margin-bottom:22px}.wtpl .wt-chap::before{content:'';position:absolute;left:-24px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 4px var(--cdot)}"+
 ".wtpl .wt-yr{font-family:"+f.label+",serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac)}.wtpl .wt-ct{font-family:"+f.name+",serif;font-style:italic;font-size:22px;margin:3px 0 5px;color:var(--tx)}.wtpl .wt-cd2{font-size:16px;line-height:1.55;color:var(--txs)}"+
 ".wtpl .wt-gal{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}.wtpl .wt-ph{aspect-ratio:3/4;background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid var(--line);background-size:cover;background-position:center}.wtpl .wt-ph.wide{grid-column:1/-1;aspect-ratio:16/10}"+
-".wtpl .wt-frame{max-width:330px;margin:6px auto 0;border:1px solid var(--line);padding:30px 24px;position:relative}.wtpl .wt-frame::before{content:'';position:absolute;inset:5px;border:1px solid var(--line);opacity:.6}"+
+".wtpl .wt-frame{max-width:330px;margin:6px auto 0;border:1px solid var(--line);padding:30px 24px;position:relative}.wtpl .wt-frame::before{content:'';position:absolute;inset:5px;border:1px solid var(--line);opacity:.6;pointer-events:none}"+
 ".wtpl .wt-frame h4{font-family:"+f.name+",serif;font-style:italic;font-size:22px;color:var(--tx);margin-bottom:6px}.wtpl .wt-meta{font-size:16px;color:var(--txs);line-height:1.7}.wtpl .wt-venue{font-family:"+f.label+",serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);margin-top:10px}"+
 ".wtpl .wt-btns{margin-top:16px}.wtpl .wt-btn{display:block;width:100%;max-width:290px;margin:9px auto 0;padding:12px;border:1px solid var(--ac);background:transparent;color:var(--ac);font-family:"+f.label+",serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer}.wtpl .wt-btn.fill{background:var(--ac);color:var(--bg);border-color:var(--ac)}"+
 ".wtpl .wt-note{font-style:italic;font-size:16px;color:var(--txs);max-width:300px;margin:4px auto 20px;line-height:1.5}"+
