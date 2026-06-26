@@ -2355,7 +2355,7 @@ try{
     return;
   }
   // Always refresh to get a valid token
-  await _sb.auth.refreshSession();
+  await wtWithTimeout(_sb.auth.refreshSession(),8000);
 }catch(e){console.warn('[Awatu] Session refresh:',e.message);}
 // Get currentUser from session if not set
 if(!currentUser){
@@ -2390,7 +2390,7 @@ photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null,hero_pos:
 }catch(e){}
 
 // Make sure the profile row exists (FK target for events/payments/invites)
-const _profOk=await ensureProfile();
+let _profOk=false;try{_profOk=await wtWithTimeout(ensureProfile(),10000);}catch(_pe){_profOk=false;}
 if(!_profOk)showToast('Profile sync issue — see connection test','error',4000);
 // ── Save invite to DB (bg_photo included when compact) ───────────────────────
 const _invRow={
@@ -2448,11 +2448,11 @@ showToast('⚠ Database is missing columns: '+[...new Set(window._awatuMissingCo
 }
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
 if(!invErr&&_media&&Object.keys(_media).length){
-try{await wtWithTimeout(_sb.from('invites').update(_media).eq('id',inviteId),35000);}
-catch(_me){
-try{if(_media.photos){delete _media.photos;if(Object.keys(_media).length)await wtWithTimeout(_sb.from('invites').update(_media).eq('id',inviteId),20000);}}catch(_me2){}
-showToast('Your invite is saved. Some photos or music couldn\u2019t attach on this connection \u2014 open the invite later on a stronger network to finish.','info',7000);
-}
+(function(){var _mp=_sb.from('invites').update(_media).eq('id',inviteId);
+wtWithTimeout(_mp,35000).catch(function(){
+try{if(_media.photos){delete _media.photos;if(Object.keys(_media).length){_sb.from('invites').update(_media).eq('id',inviteId).then(function(){},function(){});}}}catch(_me2){}
+if(typeof showToast==='function')showToast('Your invite is saved. Some photos or music could not attach on this connection. Open it later on a stronger network to finish.','info',7000);
+});})();
 }
 // ── Tell the creator if they added music but it did not persist ──
 if(f.bgMusic&&String(f.bgMusic).startsWith('data:audio')&&!_media.bg_music&&!invErr){
@@ -2469,14 +2469,15 @@ date:dateStr,
 venue:f.venue||bkState.venue||'',
 pkg,sent:0,accepted:0,declined:0
 };
-const {error:evErr1}=await _sb.from('events').insert({..._evBase,payment_status:'pending',invite_id:inviteId});
+let evErr1=null,evErr2=null;
+try{({error:evErr1}=await wtWithTimeout(_sb.from('events').insert({..._evBase,payment_status:'pending',invite_id:inviteId}),15000));}catch(_ee){evErr1={message:'Network timeout',code:'TIMEOUT'};}
 if(evErr1){
-const {error:evErr2}=await _sb.from('events').insert(_evBase);
+try{({error:evErr2}=await wtWithTimeout(_sb.from('events').insert(_evBase),15000));}catch(_ee2){evErr2={message:'Network timeout',code:'TIMEOUT'};}
 if(evErr2) console.warn('Event save:',evErr2.code,evErr2.message);
 }
 
 // ── Save payment to DB ────────────────────────────────────────────────────────
-const {error:payErr}=await _sb.from('payments').insert({
+const _payRow={
 user_id:currentUser.id,pkg,
 amount:rules.price,ref_code:ref,
 status:'pending',
@@ -2484,7 +2485,20 @@ invite_name:f.names||'',
 design_key:activeDesignKey||'',
 invite_id:inviteId,
 client_email:currentUser.email||''
-});
+};
+let payErr=null;
+try{({error:payErr}=await wtWithTimeout(_sb.from('payments').insert(_payRow),15000));}catch(_pe){payErr={message:'Network timeout',code:'TIMEOUT'};}
+let _pg=0;
+while(payErr&&_pg<8){
+const _pm=String(payErr.message||'').match(/'([a-zA-Z_]+)' column|column "?([a-zA-Z_]+)"?/);
+const _pc=_pm?(_pm[1]||_pm[2]):null;
+if((payErr.code==='PGRST204'||/column/i.test(payErr.message||''))&&_pc&&_pc in _payRow){
+console.warn('[Awatu] payments missing column "'+_pc+'" - saving without it.');
+delete _payRow[_pc];
+try{({error:payErr}=await wtWithTimeout(_sb.from('payments').insert(_payRow),15000));}catch(_pe2){payErr={message:'Network timeout',code:'TIMEOUT'};break;}
+}else break;
+_pg++;
+}
 if(payErr) console.warn('Payment save:',payErr.code,payErr.message);
 
 // ── Update local state ────────────────────────────────────────────────────────
