@@ -2340,6 +2340,7 @@ openGuestView('preview-'+Date.now(),enc);
 }catch(e){console.warn('Preview failed',e);showToast('Could not open preview','error');}
 }
 async function submitPaymentRef(){
+_dbg('=== SUBMIT BUTTON TAPPED ===');
 const ref=document.getElementById('payRefInput')?.value.trim();
 _dbg('--- SUBMIT START --- ref="'+(ref||'(empty)')+'"');
 if(!ref){showToast('Please enter your payment reference number');return;}
@@ -2984,6 +2985,7 @@ function openWeddingCustomizer(type,inv){activeDesignKey=type;
  if(typeof window.attachCursorHover==='function')window.attachCursorHover();}
 function wtWithTimeout(p,ms){return Promise.race([Promise.resolve(p),new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},ms||20000);})]);}
 function _dbg(msg){try{var p=document.getElementById('_awatuDbg');if(!p){p=document.createElement('div');p.id='_awatuDbg';p.style.cssText='position:fixed;top:0;left:0;right:0;max-height:55vh;overflow:auto;z-index:2147483647;background:#0a0806;color:#8CFF6B;font-family:monospace;font-size:12px;line-height:1.5;padding:10px 40px 10px 12px;white-space:pre-wrap;box-shadow:0 4px 20px rgba(0,0,0,.5);';var x=document.createElement('span');x.textContent='close';x.style.cssText='position:fixed;top:8px;right:10px;color:#fff;cursor:pointer;font-weight:bold;background:#991b1b;padding:2px 8px;border-radius:6px;font-family:Inter,sans-serif;z-index:2147483647;';x.onclick=function(){p.remove();};p.appendChild(x);document.body.appendChild(p);}var line=document.createElement('div');line.textContent=msg;p.appendChild(line);p.scrollTop=p.scrollHeight;}catch(e){}}
+setTimeout(function(){try{_dbg('DEBUG BUILD ACTIVE - this green bar proves the new file is loaded. Open an invite, type a payment reference, then tap Submit. Steps 1-6 will appear here.');}catch(e){}},1400);
 function wtOpen(url){if(!url||url==='#')return;try{var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},150);}catch(e){try{window.open(url,'_blank');}catch(_){location.href=url;}}}
 function wtMapUrl(d){if(!d)return '#';if(d.map_url&&/^https?:/i.test(d.map_url))return d.map_url;var q=((d.venue||'')+' '+(d.location||d.place||'')).trim();if(!q)q='wedding venue';return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
 function wtCalUrl(d){d=d||{};var pad=function(x){return String(x).padStart(2,'0');};function fmt(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';}
