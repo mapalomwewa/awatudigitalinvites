@@ -3002,6 +3002,7 @@ function openWeddingCustomizer(type,inv){activeDesignKey=type;
  wtBindChapters();wtRenderPreview();
  if(typeof window.attachCursorHover==='function')window.attachCursorHover();}
 function wtWithTimeout(p,ms){return Promise.race([Promise.resolve(p),new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},ms||20000);})]);}
+function _dbgMap(a){try{_dbg('MAPS tapped (G8): '+(a&&a.getAttribute('href')||'?'));}catch(e){}}
 function _dbg(msg){try{var p=document.getElementById('_awatuDbg');if(!p){p=document.createElement('div');p.id='_awatuDbg';p.style.cssText='position:fixed;top:0;left:0;right:0;max-height:55vh;overflow:auto;z-index:2147483647;background:#0a0806;color:#8CFF6B;font-family:monospace;font-size:12px;line-height:1.5;padding:10px 40px 10px 12px;white-space:pre-wrap;box-shadow:0 4px 20px rgba(0,0,0,.5);';var x=document.createElement('span');x.textContent='close';x.style.cssText='position:fixed;top:8px;right:10px;color:#fff;cursor:pointer;font-weight:bold;background:#991b1b;padding:2px 8px;border-radius:6px;font-family:Inter,sans-serif;z-index:2147483647;';x.onclick=function(){p.remove();};p.appendChild(x);document.body.appendChild(p);}var line=document.createElement('div');line.textContent=msg;p.appendChild(line);p.scrollTop=p.scrollHeight;}catch(e){}}
 setTimeout(function(){try{if(!document.getElementById('_awatuBuild')){var b=document.createElement('div');b.id='_awatuBuild';b.textContent='Awatu build G8';b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:2147483647;background:rgba(16,185,129,.96);color:#fff;font:600 11px Inter,sans-serif;padding:3px 9px;border-radius:8px;letter-spacing:.3px;box-shadow:0 2px 8px rgba(0,0,0,.3);';document.body.appendChild(b);}}catch(e){}},800);
 function wtOpen(url){if(!url||url==='#')return;try{var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},150);}catch(e){try{window.open(url,'_blank');}catch(_){location.href=url;}}}
@@ -3048,11 +3049,16 @@ function wtMountGuest(data,tpl){
 async function wtGuestRsvp(data,res){try{
  _dbg('=== RSVP TAPPED (G8) === id='+(data&&data.id||'?')+' name='+(res&&res.name||'(none)')+' accepts='+(res&&res.accepts));
  if(!data||!data.id||String(data.id).indexOf('preview')===0){_dbg('RSVP STOPPED: preview link - RSVP is disabled by design. You MUST test on a real published invite link, not view-as-guest.');if(typeof showToast==='function')showToast('This is a preview, RSVP is disabled');return;}
- var key='awatu_rsvp_'+data.id;if(localStorage.getItem(key)){_dbg('RSVP STOPPED: this device already responded (stored locally). Clearing it to retry.');try{localStorage.removeItem(key);}catch(_x){}}
+ var key='awatu_rsvp_'+data.id;if(localStorage.getItem(key)){_dbg('RSVP: this device already responded.');try{var _q=document.querySelector('[data-rsvp-send]');var _qs=_q&&_q.closest?_q.closest('.wt-sec'):null;if(_qs){_qs.innerHTML='<span class="wt-eye">Thank you</span><div class="wt-title" style="margin-top:8px">Already responded</div><p class="wt-note">You have already sent your RSVP for this invitation.</p>';}}catch(_e){}if(typeof showToast==='function')showToast('You have already responded to this invitation');return;}
  if(!res.name){_dbg('RSVP STOPPED: no name entered.');if(typeof showToast==='function')showToast('Please enter your name first');return;}
  var status=res.accepts?'accepted':'declined';
- _dbg('RSVP inserting into rsvps table...');
- var ins=await wtWithTimeout(_sb.from('rsvps').insert({invite_id:data.id,guest_name:res.name,guest_email:res.email||null,status:status,message:''}),15000);
+ var ins=null,_rtry=0;
+ while(_rtry<3){_rtry++;_dbg('RSVP insert attempt '+_rtry+' of 3...');
+ try{ins=await wtWithTimeout(_sb.from('rsvps').insert({invite_id:data.id,guest_name:res.name,guest_email:res.email||null,status:status,message:''}),15000);}
+ catch(_re){ins={error:{message:String(_re&&_re.message||_re),code:'NETWORK'}};}
+ if(!(ins&&ins.error))break;
+ if(/load failed|failed to fetch|networkerror|timeout|network/i.test(String(ins.error.message||''))&&_rtry<3){await new Promise(function(r){setTimeout(r,700*_rtry);});continue;}
+ break;}
  _dbg('RSVP insert result: '+(ins&&ins.error?('FAIL code='+(ins.error.code||'?')+' msg='+(ins.error.message||'')):'OK - SAVED to database'));
  if(ins&&ins.error){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');return;}
  localStorage.setItem(key,status);
@@ -5570,9 +5576,9 @@ function S_gallery(n,cls,inner){
 }
 function S_details(n,cls,extra){
   const when=esc(n.dateStr)+(n.time?(' · '+esc(n.time)):'');
-  var main='<div class="wt-frame"><h4>'+esc(n.vlabel||'The Ceremony & Reception')+'</h4><div class="wt-meta">'+when+'</div><div class="wt-venue">'+esc(n.venue)+'</div>'+(n.place?'<div class="wt-meta" style="font-size:14px">'+esc(n.place)+'</div>':'')+(extra||'')+'<div class="wt-btns"><a class="wt-btn fill" href="'+esc(mapHref(n))+'" target="_blank" rel="noopener">Open in Maps</a><a class="wt-btn" href="'+esc(calHref(n))+'" target="_blank" rel="noopener">Add to Calendar</a></div></div>';
+  var main='<div class="wt-frame"><h4>'+esc(n.vlabel||'The Ceremony & Reception')+'</h4><div class="wt-meta">'+when+'</div><div class="wt-venue">'+esc(n.venue)+'</div>'+(n.place?'<div class="wt-meta" style="font-size:14px">'+esc(n.place)+'</div>':'')+(extra||'')+'<div class="wt-btns"><a class="wt-btn fill" href="'+esc(mapHref(n))+'" target="_blank" rel="noopener" onclick="_dbgMap(this)">Open in Maps</a><a class="wt-btn" href="'+esc(calHref(n))+'" target="_blank" rel="noopener">Add to Calendar</a></div></div>';
   var more='';
-  if(Array.isArray(n.locations)){more=n.locations.filter(function(L){return L&&(L.venue||L.label||L.address);}).map(function(L){var w=L.time?esc(L.time):'';return '<div class="wt-frame"><h4>'+esc(L.label||'Location')+'</h4>'+(w?'<div class="wt-meta">'+w+'</div>':'')+'<div class="wt-venue">'+esc(L.venue||'')+'</div>'+(L.address?'<div class="wt-meta" style="font-size:14px">'+esc(L.address)+'</div>':'')+'<div class="wt-btns"><a class="wt-btn fill" href="'+esc(mapHrefRaw(L.venue,L.address,L.address))+'" target="_blank" rel="noopener">Open in Maps</a></div></div>';}).join('');}
+  if(Array.isArray(n.locations)){more=n.locations.filter(function(L){return L&&(L.venue||L.label||L.address);}).map(function(L){var w=L.time?esc(L.time):'';return '<div class="wt-frame"><h4>'+esc(L.label||'Location')+'</h4>'+(w?'<div class="wt-meta">'+w+'</div>':'')+'<div class="wt-venue">'+esc(L.venue||'')+'</div>'+(L.address?'<div class="wt-meta" style="font-size:14px">'+esc(L.address)+'</div>':'')+'<div class="wt-btns"><a class="wt-btn fill" href="'+esc(mapHrefRaw(L.venue,L.address,L.address))+'" target="_blank" rel="noopener" onclick="_dbgMap(this)">Open in Maps</a></div></div>';}).join('');}
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center"><div class="wt-kick">Join us to celebrate</div><div class="wt-title">Event Details</div>'+fl()+main+more+'</section>';
 }
 function S_rsvp(n,cls){
