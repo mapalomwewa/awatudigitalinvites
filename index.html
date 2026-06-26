@@ -2341,6 +2341,7 @@ openGuestView('preview-'+Date.now(),enc);
 }
 async function submitPaymentRef(){
 const ref=document.getElementById('payRefInput')?.value.trim();
+_dbg('--- SUBMIT START --- ref="'+(ref||'(empty)')+'"');
 if(!ref){showToast('Please enter your payment reference number');return;}
 const btn=document.getElementById('paySubmitBtn');
 if(btn){btn.textContent='Saving…';btn.disabled=true;}
@@ -2367,6 +2368,7 @@ if(!currentUser){
     return;
   }
 }
+_dbg('1 session+user OK: '+(currentUser&&currentUser.email||'?'));
 const pkg=customFields._pkg||bkState.pkg||'Standard';
 const rules=getPkgRules(pkg);
 const inviteId=genInviteId();
@@ -2391,6 +2393,7 @@ photos:(f.photos||[]).map(p=>({data:p.data})),bg_music:f.bgMusic||null,hero_pos:
 
 // Make sure the profile row exists (FK target for events/payments/invites)
 let _profOk=false;try{_profOk=await wtWithTimeout(ensureProfile(),10000);}catch(_pe){_profOk=false;}
+_dbg('2 profile: '+(_profOk?'OK':'FAIL'));
 if(!_profOk)showToast('Profile sync issue — see connection test','error',4000);
 // ── Save invite to DB (bg_photo included when compact) ───────────────────────
 const _invRow={
@@ -2447,6 +2450,7 @@ if(window._awatuMissingCols&&window._awatuMissingCols.length&&currentUser&&curre
 showToast('⚠ Database is missing columns: '+[...new Set(window._awatuMissingCols)].join(', ')+' — run the schema SQL','error',8000);
 }
 if(invErr) console.warn('Invite save:',invErr.code,invErr.message);
+_dbg('3 invite: '+(invErr?('FAIL '+(invErr.code||'')+' '+(invErr.message||'')):'OK'));
 if(!invErr&&_media&&Object.keys(_media).length){
 (function(){var _mp=_sb.from('invites').update(_media).eq('id',inviteId);
 wtWithTimeout(_mp,35000).catch(function(){
@@ -2475,6 +2479,7 @@ if(evErr1){
 try{({error:evErr2}=await wtWithTimeout(_sb.from('events').insert(_evBase),15000));}catch(_ee2){evErr2={message:'Network timeout',code:'TIMEOUT'};}
 if(evErr2) console.warn('Event save:',evErr2.code,evErr2.message);
 }
+_dbg('4 event: '+(evErr1?('try1 '+(evErr1.code||'')+' '+(evErr1.message||'')):'OK')+(evErr2?(' | try2 '+(evErr2.code||'')+' '+(evErr2.message||'')):''));
 
 // ── Save payment to DB ────────────────────────────────────────────────────────
 const _payRow={
@@ -2500,6 +2505,7 @@ try{({error:payErr}=await wtWithTimeout(_sb.from('payments').insert(_payRow),150
 _pg++;
 }
 if(payErr) console.warn('Payment save:',payErr.code,payErr.message);
+_dbg('5 payment: '+(payErr?('FAIL '+(payErr.code||'')+' '+(payErr.message||'')):'OK (row written)'));
 
 // ── Update local state ────────────────────────────────────────────────────────
 const tempId='pending_'+currentUser.id+'_'+(activeDesignKey||'');
@@ -2524,10 +2530,12 @@ showToast('Submitted with warnings — see the red banner','error',5000);
 }else{
 showToast('Submitted! Your invite is pending approval.','success',5000);
 }
+_dbg('6 redirecting to dashboard now');
 setTimeout(()=>openDash(),800);
 
 }catch(e){
 console.error('submitPaymentRef error:',e);
+_dbg('!! THREW BEFORE FINISHING: '+(e&&e.message||e));
 showToast('Error: '+e.message,'error',5000);
 }finally{
 if(btn){btn.textContent='Submit Payment Reference';btn.disabled=false;}
@@ -2975,6 +2983,7 @@ function openWeddingCustomizer(type,inv){activeDesignKey=type;
  wtBindChapters();wtRenderPreview();
  if(typeof window.attachCursorHover==='function')window.attachCursorHover();}
 function wtWithTimeout(p,ms){return Promise.race([Promise.resolve(p),new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},ms||20000);})]);}
+function _dbg(msg){try{var p=document.getElementById('_awatuDbg');if(!p){p=document.createElement('div');p.id='_awatuDbg';p.style.cssText='position:fixed;top:0;left:0;right:0;max-height:55vh;overflow:auto;z-index:2147483647;background:#0a0806;color:#8CFF6B;font-family:monospace;font-size:12px;line-height:1.5;padding:10px 40px 10px 12px;white-space:pre-wrap;box-shadow:0 4px 20px rgba(0,0,0,.5);';var x=document.createElement('span');x.textContent='close';x.style.cssText='position:fixed;top:8px;right:10px;color:#fff;cursor:pointer;font-weight:bold;background:#991b1b;padding:2px 8px;border-radius:6px;font-family:Inter,sans-serif;z-index:2147483647;';x.onclick=function(){p.remove();};p.appendChild(x);document.body.appendChild(p);}var line=document.createElement('div');line.textContent=msg;p.appendChild(line);p.scrollTop=p.scrollHeight;}catch(e){}}
 function wtOpen(url){if(!url||url==='#')return;try{var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},150);}catch(e){try{window.open(url,'_blank');}catch(_){location.href=url;}}}
 function wtMapUrl(d){if(!d)return '#';if(d.map_url&&/^https?:/i.test(d.map_url))return d.map_url;var q=((d.venue||'')+' '+(d.location||d.place||'')).trim();if(!q)q='wedding venue';return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
 function wtCalUrl(d){d=d||{};var pad=function(x){return String(x).padStart(2,'0');};function fmt(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';}
