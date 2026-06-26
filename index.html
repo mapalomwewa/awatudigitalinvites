@@ -3046,16 +3046,19 @@ function wtMountGuest(data,tpl){
  var loading=document.getElementById('gvLoading');if(loading)loading.style.display='none';
  return true;}
 async function wtGuestRsvp(data,res){try{
- if(!data||!data.id||String(data.id).indexOf('preview')===0){if(typeof showToast==='function')showToast('This is a preview, RSVP is disabled');return;}
- var key='awatu_rsvp_'+data.id;if(localStorage.getItem(key)){if(typeof showToast==='function')showToast('You have already responded to this invitation');return;}
- if(!res.name){if(typeof showToast==='function')showToast('Please enter your name first');return;}
+ _dbg('=== RSVP TAPPED (G8) === id='+(data&&data.id||'?')+' name='+(res&&res.name||'(none)')+' accepts='+(res&&res.accepts));
+ if(!data||!data.id||String(data.id).indexOf('preview')===0){_dbg('RSVP STOPPED: preview link - RSVP is disabled by design. You MUST test on a real published invite link, not view-as-guest.');if(typeof showToast==='function')showToast('This is a preview, RSVP is disabled');return;}
+ var key='awatu_rsvp_'+data.id;if(localStorage.getItem(key)){_dbg('RSVP STOPPED: this device already responded (stored locally). Clearing it to retry.');try{localStorage.removeItem(key);}catch(_x){}}
+ if(!res.name){_dbg('RSVP STOPPED: no name entered.');if(typeof showToast==='function')showToast('Please enter your name first');return;}
  var status=res.accepts?'accepted':'declined';
+ _dbg('RSVP inserting into rsvps table...');
  var ins=await wtWithTimeout(_sb.from('rsvps').insert({invite_id:data.id,guest_name:res.name,guest_email:res.email||null,status:status,message:''}),15000);
+ _dbg('RSVP insert result: '+(ins&&ins.error?('FAIL code='+(ins.error.code||'?')+' msg='+(ins.error.message||'')):'OK - SAVED to database'));
  if(ins&&ins.error){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');return;}
  localStorage.setItem(key,status);
  try{var _sbn=document.querySelector('[data-rsvp-send]');var _sec=_sbn&&_sbn.closest?_sbn.closest('.wt-sec'):null;if(_sec){_sec.innerHTML='<span class="wt-eye">Thank you</span><div class="wt-title" style="margin-top:8px">Response received</div><p class="wt-note">'+(res.accepts?'We can not wait to celebrate with you.':'Thank you for letting us know.')+'</p>';}}catch(_e){}
  if(typeof showToast==='function')showToast(res.accepts?'Thank you! Your RSVP is in.':'Thank you for letting us know.');
-}catch(e){if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
+}catch(e){_dbg('RSVP THREW: '+(e&&e.message||e));if(typeof showToast==='function')showToast('Something went wrong. Please try again.');}}
 
 function populateGuestView(data){
 var _h=document.getElementById('wtplHost');if(_h)_h.style.display='none';
