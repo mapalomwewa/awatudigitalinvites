@@ -5499,6 +5499,8 @@ function S_story(n,title,cls,scr){
   t+='</div>';
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center"><div class="wt-kick">Our journey</div><div class="wt-title'+(scr?' scr':'')+'">'+esc(title)+'</div>'+fl()+t+'</section>';
 }
+function mapHref(n){if(n.mapUrl&&/^https?:/i.test(n.mapUrl))return n.mapUrl;var q=((n.venue||'')+' '+(n.location||n.place||'')).trim();if(!q)q='wedding venue';return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);}
+function calHref(n){var pad=function(x){return String(x).padStart(2,'0');};var title=encodeURIComponent((n.names||'Wedding')+' Wedding');var loc=encodeURIComponent(((n.venue||'')+(n.location?(', '+n.location):'')).trim());var det=encodeURIComponent('We would be honoured to have you celebrate with us.');var dates='';var dt=n.dateISO;if(dt&&dt.getTime&&!isNaN(dt.getTime())){var s=new Date(dt.getTime());var st=String(n.startTime||n.start_time||'');var hm=st.match(/(\d{1,2}):(\d{2})/);if(hm){s.setHours(+hm[1],+hm[2],0,0);}else{s.setHours(15,0,0,0);}var e=new Date(s.getTime()+3*3600*1000);var fmt=function(x){return x.getFullYear()+pad(x.getMonth()+1)+pad(x.getDate())+'T'+pad(x.getHours())+pad(x.getMinutes())+'00';};dates='&dates='+fmt(s)+'/'+fmt(e);}return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+title+'&location='+loc+'&details='+det+dates;}
 function ph(n,i){const u=n.photos[i];return '<div class="wt-ph"'+(u?(' style="background-image:url(\''+u.replace(/'/g,"%27")+'\')"'):'')+'></div>';}
 function S_gallery(n,cls,inner){
   var _ps=(n.photos||[]);var _pn=_ps.length;function _pd(ix,w){var u=_ps[ix];return '<div class="wt-ph'+(w?' wide':'')+'"'+(u?(' style="background-image:url(\''+String(u).replace(/'/g,"%27")+'\')"'):'')+'></div>';}var _gw='';if(_pn<=1){_gw=_pd(0,true);}else if(_pn===2){_gw=_pd(0,true)+_pd(1,true);}else{var _st=0;if(_pn%2===1){_gw+=_pd(0,true);_st=1;}for(var _gi=_st;_gi<_pn;_gi++){_gw+=_pd(_gi,false);}}const g=inner||('<div class="wt-gal">'+_gw+'</div>');
@@ -5509,8 +5511,7 @@ function S_details(n,cls,extra){
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center"><div class="wt-kick">Join us to celebrate</div><div class="wt-title">Event Details</div>'+fl()+
   '<div class="wt-frame"><h4>The Ceremony &amp; Reception</h4><div class="wt-meta">'+when+'</div><div class="wt-venue">'+esc(n.venue)+'</div>'+
   (n.place?'<div class="wt-meta" style="font-size:14px">'+esc(n.place)+'</div>':'')+(extra||'')+
-  '<div class="wt-btns">'+(n.mapUrl?'<a class="wt-btn fill" href="'+esc(n.mapUrl)+'" target="_blank" rel="noopener">Open in Maps</a>':'<a class="wt-btn fill" data-act="map">Open in Maps</a>')+
-  '<a class="wt-btn" data-act="cal">Add to Calendar</a></div></div></section>';
+  '<div class="wt-btns"><a class="wt-btn fill" href="'+esc(mapHref(n))+'" target="_blank" rel="noopener">Open in Maps</a><a class="wt-btn" href="'+esc(calHref(n))+'" target="_blank" rel="noopener">Add to Calendar</a></div></div></section>';
 }
 function S_rsvp(n,cls){
   return '<section class="wt-sec '+(cls||'')+'" style="text-align:center;padding-bottom:54px"><span class="wt-eye">Be our guest</span>'+
