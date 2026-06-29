@@ -5731,6 +5731,9 @@ function mkSage(v){return {fonts:{name:CG,label:CZ,body:CG,script:GV},vars:v,ext
 T['wed-bf']=mkBf(_v2('#F7F3EC','#EFE7D8','#5a2a2a','#7a5a4a','#9a8a78','#9c7a3c','#c2a05a'));
 T['wed-red']=mkRed(_v2('#831f26','#5e0f17','#f3e3dc','#e0c2bb','#c89a93','#f0d590','#f5e2a8'));
 T['wed-sage']=mkSage(_v2('#DFE4D6','#D2DAC4','#3c4a2c','#5a6a45','#7a8a65','#46552f','#7a8a55'));
+/* These three are weddings, so give them a wedding seal (not the birthday one) */
+const wedInvSeal=n=>'<div class="wt-seal" data-open><div class="wt-seal-in"><div class="wt-wax binv-wax"><span class="wt-mono">'+esc(((n.a&&n.a[0])||'')+((n.b&&n.b[0])||''))+'</span></div><div class="wt-cap">You are invited</div><div class="wt-tap">tap to open</div></div><button class="wt-openbtn" data-open></button></div>';
+T['wed-bf'].seal=wedInvSeal;T['wed-red'].seal=wedInvSeal;T['wed-sage'].seal=wedInvSeal;
 T['binv-4']=mkBf(_v2('#F7EDED','#F0DEDE','#5a2030','#7a3040','#a06070','#7a2e3a','#a04a58'));
 T['binv-5']=mkRed(_v2('#6a1f2a','#4a141c','#ecd6cf','#d8b0a4','#b88a82','#f0d590','#f5e2a8'));
 T['binv-6']=mkSage(_v2('#E7E4D6','#DBD7C4','#4a4632','#6a6448','#8a8468','#7a6a3a','#a08a4a'));
